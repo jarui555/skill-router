@@ -76,7 +76,7 @@ def main() -> int:
     r = subprocess.run([sys.executable, str(CHECK)], cwd=str(HERE))
     if r.returncode != 0:
         print()
-        print(f"{NO} 自检没过。把上面整段输出发到 QQ 群 606140489")
+        print(f"{NO} 自检没过。把上面整段输出发到极跃Ai交流群 606140489")
         return 1
 
     # ── 4. 配置 ──────────────────────────────────────────────
@@ -115,7 +115,7 @@ def main() -> int:
     print("AGENTS.md 或 CLAUDE.md。不贴的话，AI 不会自动去查。")
     line("-")
     print()
-    print("装完还是不对？QQ 群 606140489，把上面的输出贴上来。")
+    print("装完还是不对？极跃Ai交流群 606140489，把上面的输出贴上来。")
     print()
     return 0
 

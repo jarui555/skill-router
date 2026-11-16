@@ -2,11 +2,11 @@
 
 <div align="center">
 
-### 💬 交流群：QQ 606140489
+### 💬 极跃Ai交流群：606140489
 
 装不上 · 用不对 · 想投稿经验条目，直接进来问
 
-[![QQ群 606140489](https://img.shields.io/badge/QQ%E7%BE%A4-606140489-12B7F5?style=for-the-badge)](#交流)
+[![极跃Ai交流群 606140489](https://img.shields.io/badge/%E6%9E%81%E8%B7%83Ai%E4%BA%A4%E6%B5%81%E7%BE%A4-606140489-12B7F5?style=for-the-badge)](#交流)
 
 </div>
 
@@ -172,7 +172,7 @@ logs/error.log     被 except 吞掉的异常
 
 ## 交流
 
-QQ 群 **606140489** —— 装不上、用不对、想投稿经验条目，都来这里。
+极跃Ai交流群 **606140489** —— 装不上、用不对、想投稿经验条目，都来这里。
 
 提问前先跑一遍 `python check.py`，把输出贴上来，比描述半天现象有用。
 

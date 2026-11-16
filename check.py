@@ -110,7 +110,7 @@ def main() -> int:
     print(f"✓ 全部通过 {len(ok)} / {len(ok)}")
     print("\n下一步：把 rules/AGENTS.md 的内容贴到你的项目里，")
     print("否则「卡住自动翻经验库」这层不会生效。")
-    print("\n遇到问题：QQ 群 606140489")
+    print("\n遇到问题：极跃Ai交流群 606140489")
     return 0
 
 

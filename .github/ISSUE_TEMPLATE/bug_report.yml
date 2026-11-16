@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        > ### 💬 急事直接进群：QQ **606140489**
+        > ### 💬 急事直接进群：极跃Ai交流群 **606140489**
         >
         > 群里回复比 issue 快。提问前先跑 `python check.py`，把输出贴上来。
 
