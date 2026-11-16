@@ -1,0 +1,9 @@
+cache/
+logs/
+usage.json
+__pycache__/
+*.pyc
+.venv/
+dist/
+dist_*/
+_probe_*/

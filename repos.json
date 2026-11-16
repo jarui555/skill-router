@@ -1,0 +1,109 @@
+{
+ "repos": [
+  {
+   "repo": "SnailSploit/Claude-Red",
+   "trust": "trusted",
+   "domain": "offensive",
+   "note": "79 skill · 攻击面最全"
+  },
+  {
+   "repo": "trailofbits/skills",
+   "trust": "trusted",
+   "domain": "audit",
+   "note": "85 skill · 代码审计"
+  },
+  {
+   "repo": "transilienceai/communitytools",
+   "trust": "trusted",
+   "domain": "pentest",
+   "note": "50 skill · 渗透全流程"
+  },
+  {
+   "repo": "elementalsouls/Claude-BugHunter",
+   "trust": "trusted",
+   "domain": "bugbounty",
+   "note": "83 skill · bug bounty"
+  },
+  {
+   "repo": "BrownFineSecurity/iothackbot",
+   "trust": "trusted",
+   "domain": "iot",
+   "note": "13 skill · 硬件/IoT，默认分支 master"
+  },
+  {
+   "repo": "ljagiello/ctf-skills",
+   "trust": "trusted",
+   "domain": "ctf",
+   "note": "12 skill · CTF 全题型"
+  },
+  {
+   "repo": "ADScanPro/Claude-AD",
+   "trust": "trusted",
+   "domain": "ad",
+   "note": "8 skill · AD 内网纵深"
+  },
+  {
+   "repo": "MyuriKanao/src-hunter-skill",
+   "trust": "indexed-only",
+   "domain": "src",
+   "note": "单 skill + 277 references · 中文 payload 库"
+  },
+  {
+   "repo": "manyuegong33/r0crawl_skills",
+   "trust": "trusted",
+   "domain": "reversing",
+   "note": "219 skill · 逆向全栈：Android 脱壳/反作弊/小程序/协议/ARM",
+   "domain_overrides": {
+    "packer-and-loader-analysis": "unpack",
+    "apk-protection-analysis": "unpack",
+    "native-unpacking": "unpack",
+    "packed-so-elf-rebuild": "unpack",
+    "dump-fix-rebuild": "unpack",
+    "memdumper-artifact-validation": "unpack",
+    "android-unpacking-and-dumping": "unpack",
+    "dex-memory-dump": "unpack",
+    "ios-unpacking-and-dump": "unpack",
+    "virtualization-protection": "unpack",
+    "jsvmp-vmp-analysis": "unpack",
+    "ollvm-deobfuscation": "unpack",
+    "ollvm-recovery-workflow": "unpack",
+    "anti-analysis-and-integrity": "unpack",
+    "anti-hook-artifact-analysis": "unpack",
+    "apk-classloader-tracing": "unpack",
+    "frida-anti-detection-analysis": "unpack",
+    "root-emulator-detection": "unpack"
+   }
+  },
+  {
+   "repo": "P4nda0s/reverse-skills",
+   "trust": "trusted",
+   "domain": "reversing",
+   "note": "8 skill · 工具级：IDA Python/Frida/Unicorn/iOS dump/U3D dump"
+  },
+  {
+   "repo": "SimoneAvogadro/android-reverse-engineering-skill",
+   "trust": "trusted",
+   "domain": "reversing",
+   "note": "1 skill · Android 逆向专精，默认分支 master"
+  },
+  {
+   "repo": "wul7chaos/vmp-reverse-skill",
+   "trust": "trusted",
+   "domain": "unpack",
+   "note": "VMP 去虚拟化专项 · dispatcher/handler 切片 + pypcode/z3 验证，覆盖 x86/ARM64/so"
+  },
+  {
+   "repo": "dhicoc/dsh-reverse-skill",
+   "trust": "trusted",
+   "domain": "reversing",
+   "note": "88 skill · CTF 竞赛逆向（与 zhaoxuya520 同源）"
+  },
+  {
+   "repo": "ganjue817-stack/pojie-skill",
+   "trust": "indexed-only",
+   "domain": "unpack",
+   "note": "破解总入口 · 819 源 skill 分 11 类，默认分支 master，靠 read_ref 逐层读"
+  }
+ ],
+ "local": []
+}
