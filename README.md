@@ -1,9 +1,18 @@
 # skill-router
 
+<div align="center">
+
+### 💬 交流群：QQ 606140489
+
+装不上 · 用不对 · 想投稿经验条目，直接进来问
+
+[![QQ群 606140489](https://img.shields.io/badge/QQ%E7%BE%A4-606140489-12B7F5?style=for-the-badge)](#交流)
+
+</div>
+
 [![check](https://github.com/jarui555/skill-router/actions/workflows/ci.yml/badge.svg)](https://github.com/jarui555/skill-router/actions/workflows/ci.yml)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![QQ群](https://img.shields.io/badge/QQ%E7%BE%A4-606140489-12B7F5.svg)](#交流)
 
 按需调取 GitHub 上的 agent skills —— 零全量下载，命中才注入。
 

@@ -1,0 +1,58 @@
+name: 装不上 / 跑不起来
+description: check.py 报错、工具没注册、索引读不到
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > ### 💬 急事直接进群：QQ **606140489**
+        >
+        > 群里回复比 issue 快。提问前先跑 `python check.py`，把输出贴上来。
+
+  - type: input
+    id: python
+    attributes:
+      label: Python 版本
+      description: 贴 `python -V` 的输出
+      placeholder: Python 3.12.4
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: 系统
+      options:
+        - Windows
+        - Linux
+        - macOS
+        - 其他
+    validations:
+      required: true
+
+  - type: input
+    id: mcp
+    attributes:
+      label: mcp 版本
+      description: 贴 `pip show mcp | grep Version` 的输出
+      placeholder: "1.30.0"
+
+  - type: textarea
+    id: check
+    attributes:
+      label: check.py 输出
+      description: 完整贴，不要只贴最后一行
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: 你在做什么
+      description: 哪个客户端、调了哪个工具、任务是什么
+      placeholder: |
+        Codex CLI，调 skill_plan 返回「索引为空」，但我已经跑过 skill_sync
+    validations:
+      required: true
