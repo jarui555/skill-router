@@ -3,6 +3,7 @@
 [![check](https://github.com/jarui555/skill-router/actions/workflows/ci.yml/badge.svg)](https://github.com/jarui555/skill-router/actions/workflows/ci.yml)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![QQ群](https://img.shields.io/badge/QQ%E7%BE%A4-606140489-12B7F5.svg)](#交流)
 
 按需调取 GitHub 上的 agent skills —— 零全量下载，命中才注入。
 
@@ -142,8 +143,21 @@ logs/error.log     被 except 吞掉的异常
 | `SKILL_ROUTER_HOME` | 数据目录，默认本文件所在目录 |
 | `GITHUB_TOKEN` / `GH_TOKEN` | 可选，只影响 enrich 速度 |
 
+## 交流
+
+QQ 群 **606140489** —— 装不上、用不对、想投稿经验条目，都来这里。
+
+提问前先跑一遍 `python check.py`，把输出贴上来，比描述半天现象有用。
+
+| 想干什么 | 怎么做 |
+| :--- | :--- |
+| 装完跑不起来 | 贴 `check.py` 输出 + Python 版本 + 系统 |
+| 模型不会自己查 skill | 看上面「自动触发」那节，`rules/AGENTS.md` 贴了吗 |
+| 投稿一条经验 | 照 `experience.json` 现有格式加，必须带 `evidence.source` |
+| 某个 skill 内容有问题 | 开 issue，注明仓库名 + skill 名 |
+
 ## 边界
 
-- 索引里 16 个源都是第三方仓库，各自有 license，商用前自己看
+- 索引里 14 个源都是第三方仓库，各自有 license，商用前自己看
 - 经验库带置信度，`<0.85` 会标「未验证」，版本不同坑也不同
 - 预算硬上限 40000 tokens，一次 `full` 加载超过 2 个 skill 会顶到闸门
