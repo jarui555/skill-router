@@ -27,6 +27,14 @@ import re
 import time
 from pathlib import Path
 
+# 现象本体：口语 → 技术域的映射。和 server.py 共用同一份（phenomena.py）。
+# 没有它的时候，用户说「一打开调试器就退出」，条目里写「反调试检测」，
+# 两边一个字都对不上，实测召回率只有 21%。
+try:
+    from phenomena import PHENOMENA as _PHEN
+except Exception:
+    _PHEN = {}
+
 EXP_FILE = Path(__file__).with_name("experience.json")
 _LOCK_LOADED: dict = {"data": None, "mtime": -1.0}
 # 检索索引缓存。两个都要缓存，否则每次检索都重算：
@@ -93,6 +101,19 @@ def search(query: str, topk: int = 3, phase: str = "",
     if not entries:
         return []
     qt = _tokens(query) - _STOP
+
+    # 口语 → 同类词扩展：命中某一类的任一口语词，就把这一类的全部词也加进来。
+    # 「一打开调试器就退出」原本和「反调试检测」零重叠，扩展后共享「调试」「退出」。
+    if _PHEN and qt:
+        _low = (query or "").lower()
+        _extra: set[str] = set()
+        for _words in _PHEN.values():
+            if any(_w in _low for _w in _words):
+                for _w in _words:
+                    _extra |= _tokens(_w)
+        if _extra:
+            qt |= (_extra - _STOP)
+
     if not qt:
         # 只给 phase 不给 query → 返回该阶段全部（按可信度排序）。
         # 场景：动手前想先扫一遍某层的坑（skill_exp(phase="ir")）。

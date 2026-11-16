@@ -699,18 +699,12 @@ def _api(path: str) -> Any:
 
 
 def _fetch_skill_text(repo: str, sha: str, path: str) -> str:
-    """拉取 skill 正文。本地源（sha=local）直接读盘，远程走缓存 + 三源 fallback。
-
-    本地源的 path 可能是相对路径（发布包里 packs/xxx/SKILL.md），
-    相对路径一律以 SKILL_ROUTER_HOME 为基准解析 —— 否则换个 cwd 就找不到。
-    """
+    """拉取 skill 正文。本地源（sha=local）直接读盘，远程走缓存 + 三源 fallback。"""
     if sha == "local":
         p = Path(path)
-        if not p.is_absolute():
-            p = HOME / p
         if p.is_file():
             return p.read_text(encoding="utf-8", errors="replace")
-        raise RuntimeError(f"本地文件不存在：{p}")
+        raise RuntimeError(f"本地文件不存在：{path}")
 
     cache = CACHE_DIR / repo.replace("/", "__") / sha[:12] / path
     if cache.is_file():
@@ -1073,24 +1067,10 @@ def _sync_one(entry: dict, enrich: bool, pin: bool = True) -> dict:
 
 def _sync_local(entry: dict) -> dict:
     """扫描本地源。kind='skill' 只认 SKILL.md；kind='kb' 认全部 .md（方法论文章）。
-    sha 固定为 'local'，读取时直接走文件系统，零网络零延迟。
-
-    路径处理：repos.json 里写相对路径（packs/xxx）时以 SKILL_ROUTER_HOME 为基准，
-    索引里存「相对 HOME 的路径」，这样发布包换台机器也能用。
-    HOME 之外的（C:/... D:/...）保持绝对路径。
-    """
+    sha 固定为 'local'，读取时直接走文件系统，零网络零延迟。"""
     root = Path(entry["path"])
-    if not root.is_absolute():
-        root = HOME / root
     if not root.is_dir():
         raise RuntimeError(f"目录不存在：{root}")
-
-    def _store_path(f: Path) -> str:
-        try:
-            return f.relative_to(HOME).as_posix()
-        except ValueError:
-            return str(f).replace("\\", "/")
-
     domain = entry.get("domain", "local")
     overrides: dict[str, str] = entry.get("domain_overrides") or {}
     rules: list[dict] = entry.get("domain_rules") or []
@@ -1130,7 +1110,7 @@ def _sync_local(entry: dict) -> dict:
                 _warn('_sync_local', _e)
                 text = ""
             skills.append({
-                "repo": repo_id, "name": nm, "path": _store_path(f),
+                "repo": repo_id, "name": nm, "path": str(f).replace("\\", "/"),
                 "sha": "local", "branch": "local", "size": f.stat().st_size,
                 "desc": _desc_of(text), "trust": entry.get("trust", "trusted"),
                 "domain": overrides.get(nm, d), "local": True, "kb": True, "rel": rel,
@@ -1147,7 +1127,7 @@ def _sync_local(entry: dict) -> dict:
                 _warn('_sync_local', _e)
                 text = ""
             skills.append({
-                "repo": repo_id, "name": name, "path": _store_path(f),
+                "repo": repo_id, "name": name, "path": str(f).replace("\\", "/"),
                 "sha": "local", "branch": "local", "size": f.stat().st_size,
                 "desc": _desc_of(text), "trust": entry.get("trust", "trusted"),
                 "domain": overrides.get(name, domain), "local": True,
@@ -1395,77 +1375,8 @@ def _stamp_budget(payload: str, est: int) -> str:
 # 解决「用户描述行为、索引里全是术语」的字面不交问题。
 # 实测：全新未补词的行为描述命中率 20% → 100%。
 # 维护规则：只收「用户会说的白话」，不收术语（术语走 SYNONYMS）。
-PHENOMENA: dict[str, tuple[str, ...]] = {
-    "xss": ('弹窗', '弹框', '原样显示', '原样返回', '输入回显', '注入脚本', '脚本执行', '跨站', '别人打开页面', '我的输入被显示', '显示我输入的'),
-    "ssrf": ('服务器主动', '服务端访问', '外部地址', '内网探测', '回连', '请求我给的', '让服务器去', '服务端请求', '打内网'),
-    "sqli": ('数据库报错', '单引号', '拼接查询', '特殊字符', '数据库语法', '注入点', '盲注', '联合查询', '时间盲注', '改参数报错', '参数报错', '加引号报错',
-             # 中文口语里「就」「后」这类插入词极多，只收固定短语会漏掉一半表述
-             '改参数就报错', '改参数后报错', '改了参数就报错', '参数一改就报错',
-             '输入就报错', '一提交就报错', '报数据库错误', 'sql 报错'),
-    "idor": ('改id', '换个id', '别人的数据', '越权', '权限不足', '能操作别人', '遍历用户', '对象引用', '看别人订单', '别人的账号', '看到别人', '改别人密码', '改别人', '别人的信息', '替别人'),
-    "lfi": ('任意文件', '读取文件', '文件包含', '路径穿越', '目录穿越', '下载任意', '读配置文件', 'etc/passwd'),
-    "rce": ('命令执行', '执行命令', '弹shell', '反弹shell', '系统命令', '传命令', '代码执行'),
-    "logic": ('重复使用', '重复用', '重复领', '多次领', '验证码复用', '验证码可以重复', '绕过限制', '负数', '并发', '业务逻辑', '条件竞争', '零元', '0元',
-              '改价格', '改个价格', '修改价格', '一分钱', '0.01', '改金额', '修改金额', '支付金额',
-              '优惠券', '领好几次', '领多次', '无限领', '重复下单', '积分兑换', '改数量', '退款', '多退'),
-    "auth": ('没校验', '未校验', '不验', '绕过登录', '免登录', '认证绕过', '默认密码', '弱口令'),
-    "upload": ('上传脚本', '传个脚本', '上传后能执行', '图片马', '绕过后缀', '上传点'),
-    "deserialization": ('反序列化', 'gadget', '序列化数据', 'ysoserial', 'readobject'),
-    "ssti": ('模板注入', '模板渲染', '模板表达式', '模板拼接'),
-    "xxe": ('xml 实体', '外部实体', 'doctype', '实体注入'),
-    "csrf": ('跨站请求', '伪造请求', 'csrf', '自动提交表单'),
-    "open-redirect": ('跳转到我给的', '任意跳转', '跳转链接', 'redirect'),
-    "info-leak": ('配置泄露', '密钥泄露', '源码泄露', '备份文件', '环境变量', '读到配置'),
-    "unpack": ('加了壳', '上壳', '套壳', '脱壳', '打不开', '什么壳', '脱不掉'),
-    "vmp": ('虚拟机保护', '虚拟化保护', 'handler', 'dispatcher', 'vmprotect', '一层套一层', '分发器', '看不懂逻辑'),
-    "obfuscation": ('混淆', '全是跳转', '控制流平坦化', '花指令', '没意义的指令', 'ollvm'),
-    "anti-debug": ('一调试就崩', '反调试', '检测调试', '一运行就退出', '启动就崩', 'attach 就崩', '有检测'),
-    "frida": ('hook', '插桩', '运行时修改', 'frida', '注入进程'),
-    "license": ('卡密', '激活码', '授权码', '机器码', '注册机', '试用期', '序列号', '加密狗', '换台电脑不能用', '输错就退出',
-                '改时间', '系统时间', '时间校验', '到期', '过期', '免费使用', '破解版', '试用到期', '剩余天数'),
-    "anti-cheat": ('反作弊', '游戏检测', '内存改不了', '封号', 'eac', 'battleye', 'vanguard'),
-    "js-sign": ('签名参数', '加密参数', '参数对不上', 'sign', '风控', '无限 debugger'),
-    "memory": ('改血量', '改金币', '内存修改', '搜不到数值', '改数值'),
-    "ad": ('域控', '域内', 'kerberos', 'adcs', '内网域', '拿域管'),
-    "lateral": ('横向', '跳板', '其他机器', '内网漫游', '打内网其他'),
-    "privesc": ('提权', '权限提升', 'root 权限', 'system 权限', '拿到机器往上'),
-    "crypto": ('加密算法', '密文', '密钥', '解密', 'aes', 'rsa', '随机数'),
-    "phishing": ('钓鱼', '仿站', '话术', '诱导点击'),
-    "wifi": ('wifi', '无线', '握手包', '蓝牙', '抓包破解'),
-    "iot": ('固件', 'iot', 'uart', 'jtag', '路由器', '摄像头'),
-    "api": ('graphql', 'swagger', 'rest api', '接口文档', '接口未授权', 'api 遍历', 'openapi', '接口越权'),
-    "data-leak": ('手机号', '身份证', '身份证号', '泄露', '别人的信息', '别人手机号',
-                  '敏感数据', '数据库泄露', '返回了别人', '拖库', '用户数据'),
-    "techstack": ('什么框架', '用了什么', '什么cms', '什么中间件', '指纹', '识别技术栈',
-                  '技术栈', '版本识别', '什么服务器', '用的什么'),
-    "redos": ('卡死', '卡住不动', 'cpu 爆满', 'cpu 100', 'cpu 跑满', '正则', '回溯',
-              '请求超时变慢', '接口变慢', '拒绝服务'),
-    "subdomain": ('子域', '子域名', '资产发现', '旁站', 'c 段', '同 ip 站点'),
-    "cors": ('跨域', 'cors', 'origin 头', '跨域资源共享'),
-    "cache-poisoning": ('缓存投毒', '缓存欺骗', 'cdn 缓存', '缓存键', 'web cache'),
-    "prototype-pollution": ('原型链', 'prototype', '__proto__', 'constructor 污染'),
-    "host-header": ('host 头', 'host header', 'x-forwarded-host', '虚拟主机'),
-    "crlf": ('crlf', '换行注入', '响应头注入', 'header 注入'),
-    "websocket": ('websocket', 'ws 协议', 'socket 通信'),
-    "cloud": ('云元数据', '169.254.169.254', 'oss', 's3 桶', 'bucket 权限', '云函数', 'iam 权限', '对象存储'),
-    "container": ('容器逃逸', 'k8s', 'kubernetes', 'docker', 'pod', '集群提权'),
-    "supply-chain": ('供应链', '依赖投毒', 'npm 包', 'pypi', '构建链', '投毒包'),
-    "android": ('apk', '安卓', 'dex', 'smali', 'androidmanifest', '重打包'),
-    "ios": ('ipa', 'ios 应用', 'mach-o', '砸壳', '越狱'),
-    "miniprogram": ('小程序', 'wxapkg', '微信小程序', '支付宝小程序'),
-    "kernel": ('内核', '驱动', 'ring0', '内核模块', 'kernel panic'),
-    "shellcode": ('shellcode', '载荷', 'payload 编码', '反弹代码', '位置无关'),
-    "dotnet": ('.net', 'dotnet', 'c# 反编译', 'il 代码', 'dnspy', 'confuserex'),
-    "forensics": ('取证', '内存取证', '日志分析', '流量分析', '应急响应', '证据固定'),
-    "malware": ('样本分析', '病毒分析', '木马分析', '恶意代码', 'c2 通信', '家族归因',
-                '样本', '可疑文件', '可疑程序', '可疑进程', '免杀测试'),
-    "osint": ('信息收集', '资产测绘', '指纹识别', '社工库', '人员画像', '企业信息'),
-    "ddos": ('拒绝服务', 'ddos', '压测', '流量攻击', '资源耗尽'),
-    "email": ('邮件伪造', 'spf', 'dkim', 'dmarc', '钓鱼邮件', '邮件网关'),
-    "game-cheat": ('外挂', '透视', '自瞄', '飞天', '无敌', '游戏辅助', '变速',
-                   '穿墙', '瞬移', '锁血', '自动打怪', '脚本挂机', '改数值',
-                   '血量', '金币', '钻石', '内存修改', '人物加速'),
-}
+# 现象本体见 phenomena.py（experience.py 共用同一份词表）
+from phenomena import PHENOMENA, PHENOMENA_ALIAS  # noqa: E402
 
 # 注入 payload 特征：这类 query 的成分基本是 or/and/1/'/--，会被停用词过滤吃掉，
 # 必须单独识别后注入 sqli 术语，否则「OR 1=1」这种最经典的探针反而零命中。
@@ -1486,22 +1397,7 @@ _STOPWORDS = frozenset({
 })
 
 # 现象标签 → skill 名/desc 的匹配别名（标签和 skill 命名习惯不同时用）。
-PHENOMENA_ALIAS: dict[str, tuple[str, ...]] = {
-    "cache-poisoning": ('cache-poison', 'cache-deception', 'web-cache'),
-    "cloud": ('cloud-', '-cloud', 'cloud_', 'clouds', 'aws-', 'gcp-', 'azure-'),
-    "info-leak": ('info-leak', 'disclosure', 'leak'),
-    "prototype-pollution": ('prototype',),
-    "open-redirect": ('redirect',),
-    "game-cheat": ('cheat', 'memory-hacking', 'anti-cheat'),
-    "api": ('api-', 'graphql', 'swagger', 'openapi'),
-    "crypto": ('crypto', 'cipher', 'hash'),
-    "data-leak": ('data-leak', 'info-leak', 'disclosure', 'exfil', 'user-data', 'pii'),
-    "techstack": ('techstack', 'fingerprint', 'recon', 'identification'),
-    "redos": ('redos', 'regex', 'exhaustion', 'timing'),
-    # 裸 'ad' 太短：会命中 ad-environment / adaptive / admin 之类前缀，
-    # 实测「域控」的 Top1 被 ad-environment-constraints 抢走（它只是 AD 环境方法论）。
-    "ad": ('active-directory', 'adcs', 'kerberos', 'domain', 'windows-ad'),
-}
+
 
 # 「我卡住了」类元信号：不指向具体 skill，而是要求做适配自检。
 STUCK_SIGNALS: tuple[str, ...] = ('失败', '不奏效', '不行', '没用', '无效', '卡住', '卡在', '走不通', '试了几次', '试了多种', '换了几种', '打不进去', '过不去', '绕不过', '连不上', '跑不起来', '挂掉', '崩溃', '退出', 'fail', 'failed', 'not working', "doesn't work", 'stuck', 'no luck')
@@ -3467,8 +3363,42 @@ RECIPES: dict[str, dict] = {
             ],
         ],
     },
+    "privesc": {
+        "alias": ["提权", "本地提权", "suid", "sudo 配错", "seimpersonate", "内核漏洞",
+                  "从 www-data 到 root", "拿到 root", "system 权限", "普通用户变管理员"],
+        "steps": [
+            [
+                "信息",
+                ["offensive-linux-privesc", "offensive-windows-privesc"],
+                "先跑 sudo -l / whoami /priv / SUID 扫描 / 内核版本，10 分钟内出结论，别上来就找 exp",
+            ],
+            [
+                "最快路径",
+                ["offensive-linux-privesc"],
+                "顺序：sudo 配错 > 可写服务或计划任务 > SUID 认识的那几个 > 内核漏洞。前面的成功率高一档",
+            ],
+            [
+                "凭据优先",
+                ["webshell-to-system"],
+                "配置文件里的明文密码 / 云 AK/SK 往往比单机 root 更值钱，先翻这些",
+            ],
+            [
+                "内核漏洞",
+                ["offensive-linux-privesc"],
+                "最后手段。可能打崩机器，先在快照里试",
+            ],
+            [
+                "落地与横向",
+                ["post-exploit-playbook"],
+                "提权后先确认能稳定复现，再看这台机器在内网的什么位置",
+            ],
+        ],
+    },
     "ad_internal": {
-        "alias": ["内网", "域控", "ad", "kerberoast", "adcs", "横向", "提权"],
+        # 别名要够长够具体：裸「内网」会把「SSRF 打内网 redis」抢走，
+        # 裸「提权」会把「Linux 提权有 SUID」抢走（那是 privesc 配方的活）。
+        "alias": ["内网渗透", "内网漫游", "域控", "ad 域", "active directory",
+                  "kerberoast", "adcs", "横向移动", "域内横向", "内网横向"],
         "steps": [
             [
                 "侦察",
@@ -3702,8 +3632,68 @@ RECIPES: dict[str, dict] = {
             ("蓝牙", ("offensive-bluetooth-ble",), "BLE 配对、GATT 枚举、经典蓝牙嗅探"),
         ),
     },
+    "anti_debug": {
+        "alias": ["反调试", "一调试就崩", "检测调试器", "调试器被检测", "打开调试器",
+                  "调试器就退出", "一附加就退出", "attach 就崩", "anti-debug",
+                  "反虚拟机", "反沙箱", "检测到调试"],
+        "steps": [
+            [
+                "判类型",
+                ["anti-analysis-and-integrity"],
+                "先分清是反调试（检测调试器）、反虚拟机（检测环境）、还是完整性校验（检测改动）—— 三种绕法完全不同",
+            ],
+            [
+                "定位检测点",
+                ["anti-debug-bypass"],
+                "Windows：IsDebuggerPresent / CheckRemoteDebuggerPresent / PEB.BeingDebugged / NtQueryInformationProcess",
+            ],
+            [
+                "绕",
+                ["anti-debug-bypass", "vmp-anti-debug-bypass"],
+                "Frida hook 返回值 > patch 检测点 > 内核层隐藏。先用 hook 验证，再决定要不要改文件",
+            ],
+            [
+                "反虚拟机",
+                ["anti-analysis-and-integrity"],
+                "检测项通常是：注册表键 / 进程名 / 硬件特征 / 时间差。逐个 patch 或直接换真机",
+            ],
+            [
+                "验证",
+                ["rev-frida"],
+                "绕完要能稳定跑完整流程，不是「能启动」就算过",
+            ],
+        ],
+    },
+    "game_cheat": {
+        "alias": ["外挂", "透视", "自瞄", "内存修改", "游戏辅助", "aimbot", "esp",
+                  "反作弊", "过检测", "改血量", "改金币"],
+        "steps": [
+            [
+                "环境",
+                ["anti-cheat-bypass"],
+                "先确认反作弊类型（用户态 / 内核态 / 硬件），决定注入方式。内核反作弊不要硬刚",
+            ],
+            [
+                "找数据",
+                ["memory-hacking"],
+                "内存扫描找数值：先搜精确值再变动重搜；浮点要搜范围；血量常是「当前/最大」两个值相邻",
+            ],
+            [
+                "渲染",
+                ["esp-wallhack-rendering"],
+                "ESP 走 Surface / OpenGL 层，先确认有没有渲染权限（很多失败是驱动/权限问题，不是代码问题）",
+            ],
+            [
+                "对抗",
+                ["anti-cheat-kernel-analysis", "anti-cheat-bypass"],
+                "被检测时先看是行为检测（调用序列）还是特征检测（内存/模块），两者的处理完全不同",
+            ],
+        ],
+    },
     "forensics": {
-        "alias": ("取证", "应急", "内存取证", "日志分析", "流量分析", "forensics", "证据固定"),
+        "alias": ("取证", "应急", "内存取证", "内存镜像", "镜像分析", "日志分析",
+                  "流量分析", "流量包", "pcap", "forensics", "证据固定", "volatility",
+                  "webshell 通信", "入侵痕迹"),
         "steps": (
             ("固定", ("digital-forensics",), "先保全证据：镜像、哈希、时间线，别在原始介质上操作"),
             ("内存", ("ctf-forensics",), "内存镜像里找进程、凭据、注入痕迹"),
@@ -3712,7 +3702,8 @@ RECIPES: dict[str, dict] = {
         ),
     },
     "ctf_reverse": {
-        "alias": ("ctf", "pwn", "ctf 逆向", "逆向题", "ctf crypto", "re 题"),
+        "alias": ("ctf", "pwn", "ctf 逆向", "逆向题", "ctf crypto", "re 题",
+                  "杂项", "misc", "隐写", "stego", "图片隐写", "十六进制"),
         "steps": (
             ("分诊", ("ctf-reverse",), "先判题型：算法还原 / 反调试 / 虚拟机 / 固件"),
             ("静态", ("rev-idapython", "rev-struct"), "IDA 定位校验函数，恢复结构体"),

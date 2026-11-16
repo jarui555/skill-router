@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated_at": 1794842995,
+ "updated_at": 1794844453,
  "entries": [
   {
    "id": "vmp-a1",
@@ -52,7 +52,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 45,
+   "hits": 53,
    "success": 0,
    "fail": 0
   },
@@ -106,7 +106,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 17,
+   "hits": 21,
    "success": 0,
    "fail": 0
   },
@@ -376,7 +376,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 17,
+   "hits": 21,
    "success": 0,
    "fail": 0
   },
@@ -781,7 +781,7 @@
    },
    "confidence": 0.9,
    "source": "skill-reference",
-   "hits": 17,
+   "hits": 21,
    "success": 0,
    "fail": 0
   },
@@ -1420,7 +1420,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 17,
+   "hits": 21,
    "success": 0,
    "fail": 0
   },
@@ -1446,7 +1446,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 17,
+   "hits": 21,
    "success": 0,
    "fail": 0
   },
@@ -1472,7 +1472,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 17,
+   "hits": 21,
    "success": 0,
    "fail": 0
   },
@@ -1498,7 +1498,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 17,
+   "hits": 21,
    "success": 0,
    "fail": 0
   },
@@ -1524,7 +1524,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 17,
+   "hits": 21,
    "success": 0,
    "fail": 0
   },
@@ -7415,7 +7415,7 @@
    },
    "confidence": 0.75,
    "source": "technique-doc",
-   "hits": 109,
+   "hits": 114,
    "success": 0,
    "fail": 0
   },
@@ -9715,7 +9715,7 @@
    },
    "confidence": 0.75,
    "source": "technique-doc",
-   "hits": 97,
+   "hits": 102,
    "success": 0,
    "fail": 0
   },
@@ -22878,7 +22878,7 @@
    },
    "confidence": 0.87,
    "source": "license-pack",
-   "hits": 5,
+   "hits": 8,
    "success": 0,
    "fail": 0
   },
@@ -23112,7 +23112,7 @@
    },
    "confidence": 0.89,
    "source": "license-pack",
-   "hits": 10,
+   "hits": 18,
    "success": 0,
    "fail": 0
   },
@@ -23818,7 +23818,7 @@
    },
    "confidence": 0.92,
    "source": "web-takeover",
-   "hits": 16,
+   "hits": 29,
    "success": 0,
    "fail": 0
   },
@@ -23922,6 +23922,708 @@
    },
    "confidence": 0.89,
    "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-ad-01",
+   "topic": [
+    "reverse",
+    "anti-debug"
+   ],
+   "phase": "technique-note",
+   "section": "反调试先分清是检测调试器还是检测环境",
+   "target": {},
+   "symptom": "一打开调试器程序就退出，不确定是反调试、反虚拟机还是完整性校验",
+   "action": [
+    "反调试检测的是「调试器存在」：PEB.BeingDebugged / IsDebuggerPresent / 硬件断点寄存器",
+    "反虚拟机检测的是「环境可疑」：注册表键 / 进程名（vmtoolsd）/ 硬件特征 / 时间差",
+    "完整性校验检测的是「文件被改」：patch 一个字节就崩，但不 patch 能跑",
+    "三种绕法完全不同，先归类再动手"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "anti_debug#判类型"
+   },
+   "confidence": 0.9,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-ad-02",
+   "topic": [
+    "reverse",
+    "anti-debug"
+   ],
+   "phase": "technique-note",
+   "section": "Windows 反调试的几个必查点",
+   "target": {},
+   "symptom": "程序检测到调试器，不知道它查的是哪一项",
+   "action": [
+    "PEB.BeingDebugged（fs:[30h]+2）：最常见，改一个字节即可",
+    "NtQueryInformationProcess 的 ProcessDebugPort / ProcessDebugFlags",
+    "CheckRemoteDebuggerPresent、NtSetInformationThread 的 HideFromDebugger",
+    "硬件断点：读 Dr0-Dr7 寄存器，或者用 GetThreadContext 检查",
+    "时序检测：两次 QueryPerformanceCounter 差值过大 = 在单步"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "anti_debug#定位检测点"
+   },
+   "confidence": 0.88,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-ad-03",
+   "topic": [
+    "reverse",
+    "anti-debug"
+   ],
+   "phase": "pitfall",
+   "section": "用 Frida 绕反调试反而被检测到",
+   "target": {},
+   "symptom": "挂上 Frida 之后程序立刻退出，不挂反而正常",
+   "action": [
+    "很多反调试专门检测 Frida：扫 /proc/self/maps 里的 frida-agent、检测 27042 端口、扫线程名",
+    "用改名后的 frida-server + 非默认端口",
+    "或者先 patch 掉反调试再上 Frida（顺序反过来）"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "anti_debug#绕"
+   },
+   "confidence": 0.89,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-ad-04",
+   "topic": [
+    "reverse",
+    "anti-debug"
+   ],
+   "phase": "pitfall",
+   "section": "反虚拟机不用硬刚，换真机更快",
+   "target": {},
+   "symptom": "花两小时 patch 反虚拟机检测，还是有新的检测项冒出来",
+   "action": [
+    "反虚拟机检测通常有十几项，逐个 patch 是无底洞",
+    "评估：如果只是要跑一次样本，换台真机/物理机成本更低",
+    "需要反复调试时才值得做完整的反虚拟机绕过"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "anti_debug#反虚拟机"
+   },
+   "confidence": 0.86,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-ad-05",
+   "topic": [
+    "reverse",
+    "anti-debug"
+   ],
+   "phase": "principle",
+   "section": "绕完要能跑完整流程，不是能启动就算过",
+   "target": {},
+   "symptom": "绕过反调试后程序能启动，但点某个功能就崩",
+   "action": [
+    "反调试常常分布在多个位置：启动时、打开文件时、导出时",
+    "验证标准：跑完一条完整业务流程，不是看到主窗口就算成功",
+    "有日志的话对比正常启动和绕过后的日志差异"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "anti_debug#验证"
+   },
+   "confidence": 0.88,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-for-01",
+   "topic": [
+    "forensics"
+   ],
+   "phase": "technique-note",
+   "section": "内存镜像先看进程列表和网络连接",
+   "target": {},
+   "symptom": "拿到一个内存镜像，不知道从哪开始找恶意进程",
+   "action": [
+    "Volatility 3：vol -f mem.raw windows.pslist / pstree 看进程树",
+    "异常信号：父进程不对（svchost 的父进程是 explorer）、路径在 Temp、名字像系统进程但大小写不同",
+    "netscan 看网络连接：外联 IP 是否可疑、监听端口是否异常",
+    "malfind 直接扫注入代码（RWX 内存段）"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "forensics#内存"
+   },
+   "confidence": 0.9,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-for-02",
+   "topic": [
+    "forensics"
+   ],
+   "phase": "pitfall",
+   "section": "内存取证别一上来就 dump 全部字符串",
+   "target": {},
+   "symptom": "strings 整个镜像，出来几百万行，看不过来",
+   "action": [
+    "先定位可疑进程的 PID，再针对这个 PID 做 vadinfo / memdump",
+    "strings 只在已知恶意文件路径后做，用于提取配置和 C2 地址",
+    "全镜像 strings 的产出比是 1:1000000，效率极低"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "forensics#内存"
+   },
+   "confidence": 0.88,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-for-03",
+   "topic": [
+    "forensics"
+   ],
+   "phase": "technique-note",
+   "section": "流量包里找 webshell 通信的三个特征",
+   "target": {},
+   "symptom": "给了一个 pcap，怀疑有 webshell，但流量很大不知道看哪",
+   "action": [
+    "看 POST 请求的 body 长度分布：webshell 的请求通常 body 短但响应长",
+    "看 User-Agent 异常：中国菜刀/蚁剑的 UA 常是固定值或空",
+    "看 URL 规律：同一个 .php 被高频访问，且参数名很短（z1/z2）",
+    "follow tcp stream 看明文，webshell 流量通常不加密"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "forensics#流量"
+   },
+   "confidence": 0.9,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-for-04",
+   "topic": [
+    "forensics"
+   ],
+   "phase": "technique-note",
+   "section": "日志分析先建时间线再找异常",
+   "target": {},
+   "symptom": "几 GB 的日志，不知道从哪个时间点开始看",
+   "action": [
+    "先按时间排序，找出「安静期突然出现大量事件」的时间窗",
+    "Windows 重点事件 ID：4624 登录成功 / 4625 失败 / 4688 进程创建 / 7045 服务安装",
+    "Linux：auth.log 的 Failed password、cron 的异常任务、bash_history 的时间戳断层"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "forensics#日志"
+   },
+   "confidence": 0.88,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-for-05",
+   "topic": [
+    "forensics"
+   ],
+   "phase": "pitfall",
+   "section": "时间线被时区坑",
+   "target": {},
+   "symptom": "日志时间和文件时间对不上，结论全错",
+   "action": [
+    "Windows 事件日志默认 UTC，文件系统时间默认本地时区",
+    "pcap 的时间戳取决于抓包机器的时区设置",
+    "建时间线前先统一到 UTC，再换算展示"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "forensics#日志"
+   },
+   "confidence": 0.89,
+   "source": "gap-fill",
+   "hits": 1,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-for-06",
+   "topic": [
+    "forensics"
+   ],
+   "phase": "technique-note",
+   "section": "Linux 应急响应的第一分钟",
+   "target": {},
+   "symptom": "服务器怀疑被入侵，不知道先看什么（怕破坏证据）",
+   "action": [
+    "先做易失数据的快照：ps auxf / netstat -antp / lsof -i / last / who",
+    "再看持久化：crontab -l、/etc/rc.local、systemd 服务、~/.ssh/authorized_keys",
+    "最后看文件：/tmp /dev/shm 里的可执行文件、最近修改的 web 目录文件",
+    "顺序不能反 —— 重启或杀进程会丢掉内存里的证据"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "forensics#应急"
+   },
+   "confidence": 0.9,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-stego-01",
+   "topic": [
+    "ctf",
+    "forensics"
+   ],
+   "phase": "technique-note",
+   "section": "图片隐写按容器类型分头查",
+   "target": {},
+   "symptom": "给了张图片说里面有隐藏数据，不知道怎么提取",
+   "action": [
+    "PNG：先 binwalk 看有没有附加数据，再看 IHDR 之后的异常 chunk（tEXt/zTXt 常藏 flag）",
+    "JPEG：看 EOI（FFD9）之后有没有附加数据；再看 DCT 系数（steghide / outguess）",
+    "GIF：多帧之间做差分，或者看调色板顺序",
+    "通用：zsteg（PNG/BMP）、steghide（需要密码，先试空密码）"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "stego#图片"
+   },
+   "confidence": 0.9,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-stego-02",
+   "topic": [
+    "ctf",
+    "forensics"
+   ],
+   "phase": "pitfall",
+   "section": "binwalk 提取出一堆文件，不知道哪个有用",
+   "target": {},
+   "symptom": "binwalk -e 出来几十个文件，大部分是噪声",
+   "action": [
+    "先看 binwalk 的偏移表，找「文件头出现在非预期位置」的那些",
+    "用 file 命令过一遍，只看类型异常或大小异常的",
+    "优先看图片/压缩包/文本，跳过重复的 gzip 片段"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "stego#通用"
+   },
+   "confidence": 0.86,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-stego-03",
+   "topic": [
+    "ctf",
+    "forensics"
+   ],
+   "phase": "technique-note",
+   "section": "LSB 隐写先看通道再决定工具",
+   "target": {},
+   "symptom": "怀疑是 LSB 隐写，但试了几个工具都没结果",
+   "action": [
+    "先用 zsteg -a 全通道扫一遍，看有没有明显的文本特征",
+    "LSB 可能只在某一个通道（R/G/B/A），也可能在 bit 1-3 而不是 bit 0",
+    "扫不出时看直方图：LSB 隐写会让相邻像素值成对出现"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "stego#LSB"
+   },
+   "confidence": 0.87,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-stego-04",
+   "topic": [
+    "ctf",
+    "forensics"
+   ],
+   "phase": "pitfall",
+   "section": "隐写题的密码常在题面里，不在文件里",
+   "target": {},
+   "symptom": "steghide 提示要密码，试了半天爆破没结果",
+   "action": [
+    "先回题面找：作者名、文件名、题目描述里的数字都可能是密码",
+    "试空密码（直接回车）—— 很多题不设密码",
+    "爆破用 rockyou 前 1 万条就够，全量跑几小时通常没意义"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "stego#通用"
+   },
+   "confidence": 0.85,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-crypto-01",
+   "topic": [
+    "crypto"
+   ],
+   "phase": "technique-note",
+   "section": "RSA 题先看给的参数组合",
+   "target": {},
+   "symptom": "CTF 给了 RSA 的 e 和 n，不知道从哪种攻击入手",
+   "action": [
+    "只给 n 和 e，n 可分解 → 直接 factordb / yafu",
+    "给了两个 n 且共享质因子 → 求 gcd",
+    "e 很小（3）且明文短 → 低加密指数攻击，直接开方",
+    "e 和 phi 不互质 → 求 gcd 后分别解",
+    "给了 dp / dq → 相关消息攻击"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "crypto#RSA"
+   },
+   "confidence": 0.9,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-crypto-02",
+   "topic": [
+    "crypto"
+   ],
+   "phase": "technique-note",
+   "section": "从二进制里找 AES 密钥的三个位置",
+   "target": {},
+   "symptom": "程序用 AES 加密了数据，密钥不知道在哪",
+   "action": [
+    "在 EVP_EncryptInit / CCCrypt / Cipher.getInstance 下断，看第二个参数（key）",
+    "静态找：搜 16/24/32 字节的高熵常量（区分 key 和 IV：IV 通常紧邻 key）",
+    "运行时 dump：hook 加密函数，直接打印 key 和 IV 的内存"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "crypto#AES"
+   },
+   "confidence": 0.89,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-crypto-03",
+   "topic": [
+    "crypto"
+   ],
+   "phase": "pitfall",
+   "section": "哈希不是加密，别指望「解密」",
+   "target": {},
+   "symptom": "拿到一串 MD5，想还原成原文",
+   "action": [
+    "哈希不可逆，只能查表或爆破",
+    "先查在线库（cmd5 / hashes.com），常见密码秒出",
+    "查不到就用 hashcat + 规则字典，别自己写循环",
+    "加盐的哈希查表无效，要看盐是否固定、是否和密码拼接"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "crypto#hash"
+   },
+   "confidence": 0.92,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-crypto-04",
+   "topic": [
+    "crypto"
+   ],
+   "phase": "pitfall",
+   "section": "随机数可预测时加密等于没加密",
+   "target": {},
+   "symptom": "加密算法看着没问题，但密文能被还原",
+   "action": [
+    "看随机数来源：rand() / srand(time) / 固定种子 → 完全可预测",
+    "Python random 是 Mersenne Twister，给 624 个连续输出能还原内部状态",
+    "Java Random 给两个连续 nextInt 就能推种子",
+    "遇到「加密了但能破」先怀疑随机数，不是算法"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "crypto#随机数"
+   },
+   "confidence": 0.88,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-macro-01",
+   "topic": [
+    "malware"
+   ],
+   "phase": "technique-note",
+   "section": "宏样本先看 AutoOpen 和 Document_Open",
+   "target": {},
+   "symptom": "给了一个 .docm，不知道宏代码在哪",
+   "action": [
+    "olevba / oledump.py 直接抽宏代码",
+    "入口函数：AutoOpen / Document_Open / Workbook_Open / Auto_Close",
+    "看是否有 Shell / CreateObject(\"WScript.Shell\") / URLDownloadToFile",
+    "混淆常见：Chr() 拼接、StrReverse、Base64 + PowerShell -enc"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "malware#macro"
+   },
+   "confidence": 0.9,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-macro-02",
+   "topic": [
+    "malware"
+   ],
+   "phase": "pitfall",
+   "section": "宏样本的 payload 常常不在文档里",
+   "target": {},
+   "symptom": "宏代码看完了，只有一句下载命令，没有实际恶意逻辑",
+   "action": [
+    "宏通常只是 dropper：下载第二阶段 payload 到 %TEMP% 再执行",
+    "提取 URL 后不要直接访问（可能是钓鱼统计），用沙箱或离线分析",
+    "看 URL 的规律：常有 base64 参数、随机路径、Cloudflare 前置"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "malware#macro"
+   },
+   "confidence": 0.88,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-macro-03",
+   "topic": [
+    "malware"
+   ],
+   "phase": "technique-note",
+   "section": "Office 样本的 OLE 结构怎么拆",
+   "target": {},
+   "symptom": "文件打不开或打开就崩，想直接看内部结构",
+   "action": [
+    "olefile / oledump.py -i 看 stream 列表",
+    "VBA 在 Macros/VBA 流里，加密的话先解密的（VelvetSweatshop 是默认密码）",
+    "嵌入对象在 ObjectPool 里，可能是 exe 或 lnk",
+    "老式 .doc 的 ShellCode 常藏在 WordDocument 流的末尾"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "malware#macro"
+   },
+   "confidence": 0.87,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-eng-01",
+   "topic": [
+    "general"
+   ],
+   "phase": "technique-note",
+   "section": "Python 处理十万条数据慢，先定位是 CPU 还是 IO",
+   "target": {},
+   "symptom": "脚本跑 10 万条要几分钟，不知道慢在哪",
+   "action": [
+    "先 profile：cProfile -s cumtime，看时间花在哪个函数",
+    "CPU 密集 → 换数据结构（list 查找 O(n) → dict/set O(1)）或向量化",
+    "IO 密集 → 批量化（1000 次单条查询 → 1 次批量查询）、加并发",
+    "字符串拼接在循环里 → 用 list + join"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "general#perf"
+   },
+   "confidence": 0.9,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-eng-02",
+   "topic": [
+    "general"
+   ],
+   "phase": "pitfall",
+   "section": "git 提交错了，先分清是「还没推」还是「已经推了」",
+   "target": {},
+   "symptom": "提交了不该提交的内容，不知道怎么回滚",
+   "action": [
+    "还没推：git reset --soft HEAD~1（保留改动）或 --hard（丢弃改动）",
+    "已经推了但只有自己用：git reset --hard + push --force（会改写历史）",
+    "已经推了且别人在用：git revert（新增一个反向提交，不改历史）",
+    "误提交了密钥：光 revert 不够，历史里还在，要 filter-repo + 换密钥"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "general#git"
+   },
+   "confidence": 0.91,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-eng-03",
+   "topic": [
+    "general"
+   ],
+   "phase": "pitfall",
+   "section": "并发改共享状态，加锁不一定够",
+   "target": {},
+   "symptom": "多线程处理数据，结果数量对不上，偶尔丢几条",
+   "action": [
+    "先确认是不是真的并发问题：单线程跑一遍对比结果",
+    "list.append 在 CPython 里是原子的，但「读-改-写」不是",
+    "用 queue.Queue 代替自己管理锁",
+    "跨进程要用 Manager 或数据库，进程内锁无效"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "general#concurrency"
+   },
+   "confidence": 0.88,
+   "source": "gap-fill",
+   "hits": 1,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-iot-01",
+   "topic": [
+    "iot"
+   ],
+   "phase": "technique-note",
+   "section": "固件解包先判是不是标准格式",
+   "target": {},
+   "symptom": "拿到一个固件 bin，binwalk 出来一堆东西不知道哪个是文件系统",
+   "action": [
+    "binwalk 看熵：高熵段是压缩/加密，低熵段可能是明文文件系统",
+    "常见：SquashFS（hsqs 魔数）、JFFS2、UBIFS、cramfs",
+    "加密固件：先找解密函数（在 bootloader 或升级程序里），或者找厂商的解包工具",
+    "解不开时看固件头：前 64 字节常有魔数、版本、校验和"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "iot#firmware"
+   },
+   "confidence": 0.88,
+   "source": "gap-fill",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "gap-iot-02",
+   "topic": [
+    "iot"
+   ],
+   "phase": "technique-note",
+   "section": "路由器固件里的后门和硬编码凭据",
+   "target": {},
+   "symptom": "固件解开了，不知道找什么",
+   "action": [
+    "搜硬编码密码：grep -r \"password\\|passwd\\|admin\" 主要看 /etc/shadow、/etc/passwd、web 目录",
+    "看启动脚本：/etc/init.d/ 里有没有 telnetd、调试后门、默认开启的服务",
+    "看 web 服务：CGI 里的命令注入（system/popen 拼参数）",
+    "看证书和密钥：/etc/ssl 下的私钥能用来解密流量"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "gap-fill",
+    "ref": "iot#firmware"
+   },
+   "confidence": 0.89,
+   "source": "gap-fill",
    "hits": 0,
    "success": 0,
    "fail": 0
