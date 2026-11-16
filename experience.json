@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated_at": 1794837772,
+ "updated_at": 1794842995,
  "entries": [
   {
    "id": "vmp-a1",
@@ -52,7 +52,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 31,
+   "hits": 45,
    "success": 0,
    "fail": 0
   },
@@ -79,7 +79,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 14,
+   "hits": 16,
    "success": 0,
    "fail": 0
   },
@@ -106,7 +106,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 10,
+   "hits": 17,
    "success": 0,
    "fail": 0
   },
@@ -241,7 +241,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 14,
+   "hits": 16,
    "success": 0,
    "fail": 0
   },
@@ -376,7 +376,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 10,
+   "hits": 17,
    "success": 0,
    "fail": 0
   },
@@ -781,7 +781,7 @@
    },
    "confidence": 0.9,
    "source": "skill-reference",
-   "hits": 10,
+   "hits": 17,
    "success": 0,
    "fail": 0
   },
@@ -1420,7 +1420,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 10,
+   "hits": 17,
    "success": 0,
    "fail": 0
   },
@@ -1446,7 +1446,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 10,
+   "hits": 17,
    "success": 0,
    "fail": 0
   },
@@ -1472,7 +1472,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 10,
+   "hits": 17,
    "success": 0,
    "fail": 0
   },
@@ -1498,7 +1498,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 10,
+   "hits": 17,
    "success": 0,
    "fail": 0
   },
@@ -1524,7 +1524,7 @@
    },
    "confidence": 0.85,
    "source": "skill-reference",
-   "hits": 10,
+   "hits": 17,
    "success": 0,
    "fail": 0
   },
@@ -7415,7 +7415,7 @@
    },
    "confidence": 0.75,
    "source": "technique-doc",
-   "hits": 87,
+   "hits": 109,
    "success": 0,
    "fail": 0
   },
@@ -9715,7 +9715,7 @@
    },
    "confidence": 0.75,
    "source": "technique-doc",
-   "hits": 69,
+   "hits": 97,
    "success": 0,
    "fail": 0
   },
@@ -22409,6 +22409,1519 @@
    },
    "confidence": 0.58,
    "source": "github-issue",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-type-01",
+   "topic": [
+    "license",
+    "reversing"
+   ],
+   "phase": "pitfall",
+   "section": "把 D 类云端校验当 A 类本地算法做",
+   "target": {},
+   "symptom": "卡密验证在服务端：花三天写完 keygen，本地校验能过，一激活就提示授权无效",
+   "action": [
+    "动手前先断网跑一遍：能正常用才是 A/B/C，不能用就是 D",
+    "D 类在客户端里找不到「正确答案」，算法还原全是无效功",
+    "D 类只能走模拟服务端 / 中继 / patch 客户端三条路"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/network-license-mechanism-map#一"
+   },
+   "confidence": 0.92,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-type-02",
+   "topic": [
+    "license",
+    "reversing"
+   ],
+   "phase": "pitfall",
+   "section": "断网测试被宽限期骗了",
+   "target": {},
+   "symptom": "断网后软件照常启动，判定为纯本地机制，结果所有工作做完，第七天开始提示「请联网激活」",
+   "action": [
+    "断网能用不代表纯本地 —— 商业软件普遍有 7-30 天宽限期",
+    "测完宽限期再下结论：改系统时间往后跳 60 天",
+    "看配置文件/注册表里有没有 last_online_check 之类的时间戳"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/network-license-mechanism-map#二"
+   },
+   "confidence": 0.9,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-type-03",
+   "topic": [
+    "license",
+    "reversing"
+   ],
+   "phase": "pitfall",
+   "section": "改系统时间把软件锁死",
+   "target": {},
+   "symptom": "把时间调到一年后测试用期，软件直接报「检测到时间异常，授权已锁定」，改回来也不恢复",
+   "action": [
+    "改时间前先备份注册表 / 配置文件 / 整个安装目录",
+    "很多软件检测「时间倒退」，一旦触发写死标记",
+    "更安全的测法：在虚拟机快照里改，或者 hook GetSystemTime 而不是改系统时间"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/network-license-mechanism-map#二"
+   },
+   "confidence": 0.88,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-type-04",
+   "topic": [
+    "license",
+    "reversing"
+   ],
+   "phase": "technique-note",
+   "section": "机器码是哈希的输入，不是那个字符串",
+   "target": {},
+   "symptom": "在内存里找到机器码字符串，改掉之后授权依然失效",
+   "action": [
+    "机器码通常不是直接比较，而是 hash(硬件信息) → 查表/查库",
+    "要找的是哈希函数的输入（GetVolumeInformation / GetAdaptersInfo / cpuid 的返回值）",
+    "hook 这些 API 比改字符串有效"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/network-license-mechanism-map#C 类"
+   },
+   "confidence": 0.9,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-type-05",
+   "topic": [
+    "license",
+    "reversing"
+   ],
+   "phase": "principle",
+   "section": "先找离判定点最近的那一层",
+   "target": {},
+   "symptom": "混合型机制（A+C 或 B+D）不知道先做哪个，容易从最外层开始耗",
+   "action": [
+    "原则：离 if (valid) 越近，改动越少",
+    "A+C → 先破绑定再还原算法；B+D → 先看能不能 patch 验签，比模拟服务端省事",
+    "D 与保护层叠加时，先处理保护层再谈授权逻辑"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/network-license-mechanism-map#三"
+   },
+   "confidence": 0.87,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-proto-01",
+   "topic": [
+    "license",
+    "network"
+   ],
+   "phase": "technique-note",
+   "section": "用长度指纹猜签名算法",
+   "target": {},
+   "symptom": "抓到一个可疑字段，不知道是签名还是普通 ID，逆算法耗时间",
+   "action": [
+    "32 hex = MD5；40 hex = SHA1；64 hex = SHA256/HMAC-SHA256；128 hex = SHA512",
+    "44 base64（末尾=）= SHA256 的 base64；344 base64 = RSA-2048 签名",
+    "先按长度猜，再用「改一个字节看是否报签名错误」确认"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/network-license-protocol-analysis#二"
+   },
+   "confidence": 0.93,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-proto-02",
+   "topic": [
+    "license",
+    "network"
+   ],
+   "phase": "technique-note",
+   "section": "改字段看报错，反推签名覆盖范围",
+   "target": {},
+   "symptom": "不确定哪些字段参与签名，不敢乱改",
+   "action": [
+    "原样重发做基线，再逐个改业务字段",
+    "报「签名错误」= 该字段在签名内；报业务错误 = 不在签名内",
+    "逐个试完能画出签名的输入集合，比逆算法快得多"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/network-license-protocol-analysis#二"
+   },
+   "confidence": 0.92,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-proto-03",
+   "topic": [
+    "license",
+    "network"
+   ],
+   "phase": "pitfall",
+   "section": "改了 valid 字段没反应",
+   "target": {},
+   "symptom": "改了 valid 字段没反应：把响应里的 valid:false 改成 true，客户端行为完全不变",
+   "action": [
+    "客户端读的可能不是 valid —— 常见的是 code / status / ret / data.auth",
+    "先 hook JSON 解析或判定点下断，看它到底读哪个字段",
+    "盲改字段是最常见的浪费，先确认读取路径再动手"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/network-license-protocol-analysis#七"
+   },
+   "confidence": 0.9,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-proto-04",
+   "topic": [
+    "license",
+    "network"
+   ],
+   "phase": "pitfall",
+   "section": "只改 HTTP 状态码不改 body",
+   "target": {},
+   "symptom": "把 403 改成 200，客户端还是报错",
+   "action": [
+    "多数客户端看 body 不看状态码，或者两个都看",
+    "状态码、body、header 三处都要对齐",
+    "有的框架在状态码非 2xx 时直接抛异常，根本不解析 body"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/network-license-protocol-analysis#六"
+   },
+   "confidence": 0.88,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-proto-05",
+   "topic": [
+    "license",
+    "network"
+   ],
+   "phase": "pitfall",
+   "section": "nonce 防重放导致重放失败",
+   "target": {},
+   "symptom": "同一个请求发两次，第二次返回「请求已失效」，以为是签名问题",
+   "action": [
+    "看请求里有没有 nonce / rand / requestId / 时间戳",
+    "这类字段通常只参与签名，不参与业务，改掉 + 重算签名即可",
+    "如果服务端真的记录了已用 nonce，就只能走模拟服务端"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/network-license-protocol-analysis#四"
+   },
+   "confidence": 0.87,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-proto-06",
+   "topic": [
+    "license",
+    "network"
+   ],
+   "phase": "pitfall",
+   "section": "心跳失败是静默降级，不报错",
+   "target": {},
+   "symptom": "心跳请求失败后功能悄悄失效：激活成功、功能正常，用了两小时导出突然不可用，没有任何提示（心跳静默降级）",
+   "action": [
+    "挂机 2 小时全程抓包，看有没有周期性请求",
+    "心跳返回 false 时客户端常常静默降级，不弹窗",
+    "对比心跳正常/异常时的功能差异，才能发现这层"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/network-license-protocol-analysis#五"
+   },
+   "confidence": 0.9,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-proto-07",
+   "topic": [
+    "license",
+    "network"
+   ],
+   "phase": "pitfall",
+   "section": "抓不到包不一定是没有请求",
+   "target": {},
+   "symptom": "抓包工具里一片空白，以为客户端纯本地",
+   "action": [
+    "可能是 QUIC/HTTP3（UDP 443），抓包工具要开 UDP",
+    "可能是 native 层自定义协议，绕过系统代理",
+    "可能是双向认证（mTLS），握手就失败了",
+    "先看有没有 TCP/UDP 443 的流量，再看有没有 TLS 握手失败"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/network-license-protocol-analysis#一"
+   },
+   "confidence": 0.86,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-proto-08",
+   "topic": [
+    "license",
+    "network"
+   ],
+   "phase": "technique-note",
+   "section": "Java 层 unpinning 不够，pinning 常在 native",
+   "target": {},
+   "symptom": "证书固定导致抓不到包：Frida hook 了 X509TrustManager、装了系统 CA，抓包仍然握手失败",
+   "action": [
+    "pinning 常见位置：OkHttp CertificatePinner、Volley、原生 SSL_CTX_set_verify",
+    "Java 层 hook 完还不行，就往 native 走，hook SSL_CTX_set_verify / SSL_get_verify_result",
+    "实在不行从 APK 里提取证书 + 私钥（如果是 mTLS），导入抓包工具"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/network-license-protocol-analysis#一"
+   },
+   "confidence": 0.88,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-cloud-01",
+   "topic": [
+    "license",
+    "network"
+   ],
+   "phase": "principle",
+   "section": "D 类优先试 patch 客户端，不要一上来就模拟服务端",
+   "target": {},
+   "symptom": "遇到云端校验就开始搭假服务端，配证书、改 hosts、模拟接口，搞了两天",
+   "action": [
+    "先判断客户端是「拿到响应后自己判」还是「完全信任响应」",
+    "如果只是 if (resp.code === 200) unlock()，patch 这个 if 就行，根本不用管服务端",
+    "断网跑：报网络错误就退出 → 依赖响应；功能照常 → 只是上报"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/cloud-license-emulation#路线 C"
+   },
+   "confidence": 0.9,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-cloud-02",
+   "topic": [
+    "license",
+    "network"
+   ],
+   "phase": "pitfall",
+   "section": "模拟服务端跑通了但导出功能还是失败",
+   "target": {},
+   "symptom": "模拟服务端跑通了、激活流程走通、界面显示已授权，但一导出功能就提示未授权（漏了接口）",
+   "action": [
+    "客户端出站请求不止一个 —— 激活、心跳、配置拉取、功能开关各是独立接口",
+    "把所有出站域名/路径列全，一个不漏地模拟",
+    "看服务端日志里还有哪些请求没被处理"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/cloud-license-emulation#四"
+   },
+   "confidence": 0.91,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-cloud-03",
+   "topic": [
+    "license",
+    "network"
+   ],
+   "phase": "pitfall",
+   "section": "响应带签名时改 data 无效",
+   "target": {},
+   "symptom": "授权响应带签名，改 data 就报数据损坏 —— 单纯改包改不了，得替换公钥或 hook 验签",
+   "action": [
+    "报「数据损坏/校验失败」= 有签名覆盖，单纯改 data 无效",
+    "报业务错误 = 没签名，可以直接改",
+    "有签名只能二选一：替换客户端公钥，或 hook 验签函数让它永远返回 true"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/cloud-license-emulation#三"
+   },
+   "confidence": 0.9,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-cloud-04",
+   "topic": [
+    "license",
+    "network"
+   ],
+   "phase": "pitfall",
+   "section": "中继缓存遇到时间戳就废",
+   "target": {},
+   "symptom": "把正版的响应缓存下来重放，第一次能过，第二天全失效",
+   "action": [
+    "响应里有 ts / nonce / 短期 token 时，缓存重放会被拒",
+    "这种情况只能走本地模拟服务端，动态生成响应",
+    "静态授权（激活一次长期有效）才适合中继"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/cloud-license-emulation#路线 B"
+   },
+   "confidence": 0.88,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-cloud-05",
+   "topic": [
+    "license",
+    "network"
+   ],
+   "phase": "pitfall",
+   "section": "中继时机器码对不上",
+   "target": {},
+   "symptom": "中继重放时机器码对不上：用正版机器抓的响应重放到另一台，客户端报「授权与本机不匹配」",
+   "action": [
+    "响应里通常带正版那台机器的机器码哈希",
+    "客户端会校验「响应里的机器码 == 自己的机器码」",
+    "hook 机器码读取，让客户端报出正版那台的机器码"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/cloud-license-emulation#路线 B"
+   },
+   "confidence": 0.87,
+   "source": "license-pack",
+   "hits": 5,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-locate-01",
+   "topic": [
+    "license",
+    "reversing"
+   ],
+   "phase": "pitfall",
+   "section": "改完能启动就以为成功了",
+   "target": {},
+   "symptom": "改完能启动就以为成功了 —— 一导出、一保存就提示未授权（多处独立校验）",
+   "action": [
+    "授权校验常常有三处独立判定：启动时、打开项目时、导出时",
+    "patch 完必须跑全功能：新建/打开/保存/导出（各格式）/批量/打印",
+    "再挂机 2 小时测心跳，再重启测状态回写"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/license-validation-locate-patch#二"
+   },
+   "confidence": 0.93,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-locate-02",
+   "topic": [
+    "license",
+    "reversing"
+   ],
+   "phase": "pitfall",
+   "section": "patch 后启动就崩，八成是完整性校验",
+   "target": {},
+   "symptom": "改了一个字节，程序启动直接闪退，什么都不提示",
+   "action": [
+    "判断法：patch 一个字节，崩溃 = 有完整性校验；正常运行但功能没变 = patch 点不对",
+    "常见形式：文件哈希、代码段 CRC、Authenticode 签名、分段校验",
+    "在 CreateFileW 打开自身路径时下断，看读完文件后谁在算哈希"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/license-validation-locate-patch#五"
+   },
+   "confidence": 0.9,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-locate-03",
+   "topic": [
+    "license",
+    "reversing"
+   ],
+   "phase": "technique-note",
+   "section": "搜「call + test al,al + jz」批量找布尔判定",
+   "target": {},
+   "symptom": "不知道校验函数在哪，盲搜字符串又搜不到（字符串被加密）",
+   "action": [
+    "授权函数几乎都是 bool check_license()，编译后是 call → test al,al → jz",
+    "IDAPython 扫 84 C0（test al,al）后紧跟 jz/je 的模式，前一条是 call 就是候选",
+    "命中多的话，用「附近有 license 相关字符串」或「从弹窗处回溯」收敛"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/license-validation-locate-patch#一"
+   },
+   "confidence": 0.89,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-locate-04",
+   "topic": [
+    "license",
+    "reversing"
+   ],
+   "phase": "technique-note",
+   "section": "先用 Frida 改返回值验证，再 patch 二进制",
+   "target": {},
+   "symptom": "反复改文件、重打包、重启，一次验证要两分钟",
+   "action": [
+    "Frida 里 Interceptor.attach 校验函数，onLeave 里 retval.replace(ptr(1))",
+    "同时打印 Thread.backtrace 能看到被调用几次、从哪调用",
+    "逻辑确认通了再 patch 文件，省掉大量反复"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/license-validation-locate-patch#二"
+   },
+   "confidence": 0.92,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-locate-05",
+   "topic": [
+    "license",
+    "reversing"
+   ],
+   "phase": "pitfall",
+   "section": "只用函数序言做 AOB 会双命中",
+   "target": {},
+   "symptom": "特征码在目标版本上命中两处，patch 错了地方，程序行为诡异",
+   "action": [
+    "函数序言大量重复（55 8B EC 83 EC ??），必须加左侧锚点",
+    "三段锚定：前一个函数的尾部 + 目标函数序言 + 目标指令特征",
+    "验证唯一性：每个版本命中次数必须 = 1"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/license-validation-locate-patch#四"
+   },
+   "confidence": 0.9,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-locate-06",
+   "topic": [
+    "license",
+    "reversing"
+   ],
+   "phase": "pitfall",
+   "section": "重启后授权状态又变回去",
+   "target": {},
+   "symptom": "patch 后第一次能跑，关掉再开又提示未授权",
+   "action": [
+    "有些软件把授权状态写到临时文件/注册表，启动时读旧状态",
+    "patch 后要清掉这些缓存位置，或者一起 patch 读取逻辑",
+    "所以「重启后正常吗」是必测项"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/license-validation-locate-patch#六"
+   },
+   "confidence": 0.88,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-key-01",
+   "topic": [
+    "license",
+    "reversing"
+   ],
+   "phase": "principle",
+   "section": "自洽验证是假验证",
+   "target": {},
+   "symptom": "keygen 自检通过、--verify 也过了，但拿去原程序激活还是失败 —— 因为自己的算法验自己的输出永远通过",
+   "action": [
+    "自己的算法验自己的输出永远通过，这不证明任何事",
+    "唯一的验证：生成的 key 能在原程序里跑通",
+    "更强的验证：用原厂合法 key 反推，看你的算法能否算出一样的校验位"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/license-keygen-recovery#先说最容易犯的错"
+   },
+   "confidence": 0.95,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-key-02",
+   "topic": [
+    "license",
+    "reversing"
+   ],
+   "phase": "pitfall",
+   "section": "字符集归一化吃掉校验位",
+   "target": {},
+   "symptom": "算法看起来完全正确，但生成的 key 有一半激活失败",
+   "action": [
+    "很多程序把 O/0、I/1、l/1 映射到同一个值",
+    "你生成的 key 里有 O，程序按 0 处理，校验位就算错",
+    "先测程序接受哪些字符、是否做归一化，再写生成逻辑"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/license-keygen-recovery#五"
+   },
+   "confidence": 0.87,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-key-03",
+   "topic": [
+    "license",
+    "reversing"
+   ],
+   "phase": "pitfall",
+   "section": "C 的 32 位溢出 vs Python 无限精度",
+   "target": {},
+   "symptom": "调试器里的中间值和 Python 算的对不上，但看着算法一模一样",
+   "action": [
+    "所有算术都按 32 位语义：x & 0xFFFFFFFF",
+    "循环左移要显式实现：((x << n) | (x >> (32 - n))) & 0xFFFFFFFF",
+    "有符号/无符号的右移也不同，C 里 >> 对 int 是算术移位"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/license-keygen-recovery#五"
+   },
+   "confidence": 0.89,
+   "source": "license-pack",
+   "hits": 10,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-key-04",
+   "topic": [
+    "license",
+    "reversing"
+   ],
+   "phase": "pitfall",
+   "section": "时间参与运算导致去年能用的 keygen 今年全废",
+   "target": {},
+   "symptom": "同一个 keygen，去年生成的 key 能用，今年生成的全报无效",
+   "action": [
+    "有些校验位里 XOR 了当前年份/月份",
+    "测法：改系统时间，用同一个 key 测，看结果是否变化",
+    "如果依赖时间，生成时要按目标机器的当前时间算"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/license-keygen-recovery#五"
+   },
+   "confidence": 0.85,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "lic-key-05",
+   "topic": [
+    "license",
+    "reversing"
+   ],
+   "phase": "principle",
+   "section": "什么时候该放弃 keygen 改走 patch",
+   "target": {},
+   "symptom": "逆了三天还在找算法入口，投入产出明显不划算",
+   "action": [
+    "key 里有非对称签名 → 没私钥造不出，改走替换公钥/patch 验签",
+    "激活必须联网且服务端校验 → 本地算法不存在，改走模拟服务端",
+    "算法依赖服务端下发的密钥 → 改走中继/hook",
+    "patch 判定点永远比写 keygen 快，除非你需要批量生成"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "license-pack",
+    "ref": "skill-router-packs/license/license-keygen-recovery#六"
+   },
+   "confidence": 0.9,
+   "source": "license-pack",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-triage-01",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "principle",
+   "section": "打点卡住是因为排序错了，不是挖洞不行",
+   "target": {},
+   "symptom": "手上 50 个子域 300 个接口，挖了两天全是「疑似」，一个能复现的洞都没有",
+   "action": [
+    "排序比挖洞重要：先按「暴露面 / 技术栈年龄 / 功能复杂度 / 认证强度」打分",
+    "先找一个已确认的低危洞（比如未授权访问内部接口），用它摸清认证模型和代码风格",
+    "单点投入超 4 小时没明确进展就换 —— 反复换 payload 变体不叫进展"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/entry-point-triage#一"
+   },
+   "confidence": 0.92,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-triage-02",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "pitfall",
+   "section": "扫了 200 个站每个只试 3 个 payload",
+   "target": {},
+   "symptom": "资产列表很长，全扫了一遍，报告里全是「疑似存在 XX 风险」，没有一个打进去",
+   "action": [
+    "铺开扫的前提是有足够时间，且每个点至少试到能确认/排除",
+    "没有确认的洞等于零，不如集中打穿一个",
+    "判断标准：这个点打进去能不能拿到新权限或新数据，不能就划掉"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/entry-point-triage#四"
+   },
+   "confidence": 0.9,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-triage-03",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "technique-note",
+   "section": "5 分钟判断一个站值不值得深入",
+   "target": {},
+   "symptom": "不知道从哪下手，每个站都从头翻一遍，效率极低",
+   "action": [
+    "看响应头/cookie 名/报错页 → 判框架",
+    "试 /robots.txt /sitemap.xml /admin /api /swagger /actuator",
+    "看 JS 里的接口列表，找 /api/internal/ /api/debug/ 这类路径",
+    "命中任一高价值信号（报错带堆栈、actuator 可访问、rememberMe=deleteMe）就上调优先级"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/entry-point-triage#三"
+   },
+   "confidence": 0.9,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-triage-04",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "pitfall",
+   "section": "把登录框当成爆破入口",
+   "target": {},
+   "symptom": "看到登录框就开始跑字典，跑了两小时账号被锁，什么都没拿到",
+   "action": [
+    "先测有没有风控：连续错 5 次看是否锁定/加验证码",
+    "有风控时爆破是最低效的路，转去测认证绕过（JWT / session / 逻辑漏洞）",
+    "默认口令（admin/admin、admin/123456）比字典爆破命中率高得多"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/entry-point-triage#七"
+   },
+   "confidence": 0.88,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-triage-05",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "technique-note",
+   "section": "老版本框架不等于有洞",
+   "target": {},
+   "symptom": "指纹显示 Struts2，直接上 S2-045 payload，没反应，浪费一小时",
+   "action": [
+    "先确认具体小版本，很多 CVE 只影响特定版本区间",
+    "看是否已打补丁：同一 CVE 换一个无害的探测 payload（比如只触发报错不执行命令）",
+    "利用条件不满足（比如需要特定 Content-Type）也会没反应，不一定是没洞"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/entry-point-triage#七"
+   },
+   "confidence": 0.87,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-triage-06",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "principle",
+   "section": "先拿低危立足点，再打大的",
+   "target": {},
+   "symptom": "一上来就啃硬骨头（RCE / 反序列化），啃不动，时间全耗在识别 WAF 上",
+   "action": [
+    "先找一个未授权访问 / 信息泄露，哪怕危害很低",
+    "用它摸清：认证怎么做的、错误怎么处理的、代码风格、有没有内部接口",
+    "拿到这些再打大的，命中率完全不一样"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/entry-point-triage#七"
+   },
+   "confidence": 0.91,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-waf-01",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "pitfall",
+   "section": "把业务拒绝当成 WAF 拦截",
+   "target": {},
+   "symptom": "403 打不进去，以为被 WAF 拦了，换了两小时 payload，最后发现是缺 CSRF token（业务逻辑拒绝）",
+   "action": [
+    "先看响应体：短且统一（<1KB，「请求不合法」）= 可能 WAF；带业务字段 = 业务逻辑",
+    "发一个不带 payload 的正常请求做基线，再发带 payload 的对比",
+    "发一个「像 payload 但不构成攻击」的值（比如参数值就是字符串 select）—— 也被拦才是关键词黑名单"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/waf-bypass-decision-tree#一"
+   },
+   "confidence": 0.92,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-waf-02",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "technique-note",
+   "section": "找源站 IP 比绕 payload 值 10 倍",
+   "target": {},
+   "symptom": "在 payload 变形上耗了两小时，WAF 规则很严怎么改都拦",
+   "action": [
+    "证书透明日志：curl crt.sh?q=%25.TARGET&output=json",
+    "子域解析：很多子域没接 CDN，直接暴露源站",
+    "邮件头 Received 链、favicon hash 反查、多地 ping",
+    "拿到 IP 后 curl -H 'Host: TARGET' https://IP/ -k 验证是否同一站点"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/waf-bypass-decision-tree#三"
+   },
+   "confidence": 0.93,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-waf-03",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "pitfall",
+   "section": "同时改编码+大小写+注释，不知道哪层生效",
+   "target": {},
+   "symptom": "payload 变形后过了，但下次同样的目标换个参数又不行，无法复用",
+   "action": [
+    "一次只改一个维度，记录每次的结果",
+    "先试注释符（/**/），再试大小写，再试编码，逐个排除",
+    "知道是哪条规则在拦，才能针对性绕过"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/waf-bypass-decision-tree#二"
+   },
+   "confidence": 0.89,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-waf-04",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "pitfall",
+   "section": "200 但没效果 = WAF 静默拦截",
+   "target": {},
+   "symptom": "变形后返回 200，以为绕过了，但注入没生效，数据库也没报错",
+   "action": [
+    "WAF 的静默模式会返回 200 + 空数据，让你以为请求成功了",
+    "判断法：payload 换成明显会报错的（单引号 '），看是否触发数据库报错",
+    "没报错 = 请求没到后端，还在被拦"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/waf-bypass-decision-tree#五"
+   },
+   "confidence": 0.9,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-waf-05",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "technique-note",
+   "section": "换出口 IP 是最容易被忽略的一招",
+   "target": {},
+   "symptom": "任何 payload 都 403，包括看起来很正常的参数，怀疑 WAF 规则极严",
+   "action": [
+    "先换一个出口 IP 再试 —— 很多「绕不过」其实是 IP 被拉黑了",
+    "IP 信誉问题表现为：正常请求也被拦，或者响应时间恒定 0ms",
+    "换 IP 后立刻恢复 = 信誉问题，不是规则问题"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/waf-bypass-decision-tree#四"
+   },
+   "confidence": 0.88,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-waf-06",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "technique-note",
+   "section": "WAF 厂商决定用哪套变形",
+   "target": {},
+   "symptom": "用 Cloudflare 的绕过手法打阿里云 WAF，完全无效",
+   "action": [
+    "Cloudflare 重语义分析，阿里云重正则，自研 WAF 常有遗漏路径",
+    "看响应头/cookie 判厂商：cf-ray / acw_tc / AkamaiGHost / X-Sucuri-ID",
+    "判出厂商再选变形方向，比盲试快得多"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/waf-bypass-decision-tree#一"
+   },
+   "confidence": 0.89,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-shell-01",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "pitfall",
+   "section": "拿到 webshell 就以为拿到服务器",
+   "target": {},
+   "symptom": "上传成功、能执行 phpinfo，但 system() 返回空，以为 shell 是假的",
+   "action": [
+    "webshell 只是 www-data 的 PHP 执行权限，不是系统权限",
+    "先 echo ini_get('disable_functions') 看禁了什么",
+    "四道坎：disable_functions / open_basedir / 不出网 / 提权，逐个过"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/webshell-to-system#一"
+   },
+   "confidence": 0.93,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-shell-02",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "technique-note",
+   "section": "绕 disable_functions 前先看提权面",
+   "target": {},
+   "symptom": "花两小时研究 LD_PRELOAD 绕 disable_functions，最后发现有个 SUID 文件直接就能 root",
+   "action": [
+    "很多情况下不需要绕 disable_functions —— 找 SUID / 可写 cron / 配置文件密码更快",
+    "先跑 sudo -l、find / -perm -4000、find /etc -writable",
+    "确认这些路都断了，再回来研究绕禁用函数"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/webshell-to-system#二"
+   },
+   "confidence": 0.91,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-shell-03",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "technique-note",
+   "section": "配置文件里的明文密码比 root 更值钱",
+   "target": {},
+   "symptom": "提权到 root 之后不知道干什么，其实真正的价值在 wp-config.php / .env 里",
+   "action": [
+    "先找 wp-config.php / .env / docker-compose.yml / application.properties",
+    "里面有数据库密码、云厂商 AK/SK、第三方 API key",
+    "拿到云 AK 等于拿到整个云环境，价值远超单机 root"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/webshell-to-system#五"
+   },
+   "confidence": 0.92,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-shell-04",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "pitfall",
+   "section": "open_basedir 限制导致读不到 /etc/passwd",
+   "target": {},
+   "symptom": "webshell 里 file_get_contents('/etc/passwd') 报 open_basedir restriction",
+   "action": [
+    "open_basedir 只管 PHP，换语言就绕过（有 CGI/Perl/Python 入口时）",
+    "有写权限时用 symlink 建软链",
+    "拿到 FPM socket 时直接走 FastCGI 读任意文件"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/webshell-to-system#三"
+   },
+   "confidence": 0.87,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-shell-05",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "pitfall",
+   "section": "不出网时还在试下载工具",
+   "target": {},
+   "symptom": "服务器不能连外网，wget/curl 全失败，卡在这里不知道怎么继续",
+   "action": [
+    "不出网就换操作模式：本地准备好静态编译工具 → base64 分块上传 → 执行 → 读结果",
+    "先测出网类型：curl 超时 = 不出网；立即拒绝 = 出网但被防火墙拦",
+    "只有 DNS 通时走 DNS 隧道（dnscat2 / iodine），速率 5-50KB/s"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/webshell-to-system#四"
+   },
+   "confidence": 0.89,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-shell-06",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "pitfall",
+   "section": "内存马比落文件更稳",
+   "target": {},
+   "symptom": "webshell 刚传上去就被文件扫描删了，反复上传反复被删",
+   "action": [
+    "有 EDR/文件监控时，内存马（Java Filter / PHP auto_prepend）不落文件",
+    "内存马重启失效，但重启本身也是痕迹，够用",
+    "落文件的话放在不显眼路径（比如 /uploads/ 下的伪装图片目录）"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/webshell-to-system#六"
+   },
+   "confidence": 0.86,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-pivot-01",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "pitfall",
+   "section": "chisel 报 GLIBC 版本不匹配",
+   "target": {},
+   "symptom": "./chisel: /lib64/libc.so.6: version GLIBC_2.28 not found",
+   "action": [
+    "用静态编译版（chisel_*_linux_amd64），不要用 _glibc 后缀的",
+    "上传前先确认目标架构：uname -m（x86_64 / aarch64 / armv7l / mips）",
+    "ARM 设备很多，默认传 amd64 是最常见的错"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/proxy-tunnel-pivot#二"
+   },
+   "confidence": 0.9,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-pivot-02",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "pitfall",
+   "section": "proxychains 不走 UDP 和 ICMP",
+   "target": {},
+   "symptom": "配好 socks 代理后 nmap -sU 和 ping 都不通，以为隧道坏了",
+   "action": [
+    "proxychains 只代理 TCP，UDP/ICMP 不走",
+    "nmap 要用 -sT（TCP connect），不能用 -sS（SYN 需要 raw socket）",
+    "需要 UDP 时用 ligolo-ng（直接路由，不是 socks）"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/proxy-tunnel-pivot#五"
+   },
+   "confidence": 0.91,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-pivot-03",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "technique-note",
+   "section": "ligolo-ng 比 socks 快得多",
+   "target": {},
+   "symptom": "用 chisel socks 扫内网，/24 段扫了半小时还没完",
+   "action": [
+    "ligolo-ng 是直接路由，不是代理，扫描速度接近本地",
+    "服务端 interface_create --name ligolo + route_add --route 10.10.10.0/24",
+    "Windows 需要 TAP 驱动，Linux 需要 TUN 权限"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/proxy-tunnel-pivot#二"
+   },
+   "confidence": 0.89,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-pivot-04",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "pitfall",
+   "section": "只测 curl 就判断不出网",
+   "target": {},
+   "symptom": "curl 不通就认为不能出网，其实是没有 curl 或者走了代理",
+   "action": [
+    "用 bash 内建测：timeout 3 bash -c 'echo > /dev/tcp/1.1.1.1/443'",
+    "或者 nc -zv 1.1.1.1 443",
+    "三种方式分开测：443 / 80 / DNS，结论完全不同"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/proxy-tunnel-pivot#一"
+   },
+   "confidence": 0.88,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-pivot-05",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "pitfall",
+   "section": "多层跳板一次串完，断了不知道断在哪",
+   "target": {},
+   "symptom": "三层代理链，时通时不通，排查了两小时",
+   "action": [
+    "每层单独测通再串下一层",
+    "先确认跳板1 的 socks 能访问跳板2，再确认跳板2 能访问目标",
+    "一次串完出问题时，无法判断是哪一层的 DNS/路由/认证问题"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/proxy-tunnel-pivot#五"
+   },
+   "confidence": 0.87,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-post-01",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "principle",
+   "section": "拿到第一台机器先榨干它，别急着扫内网",
+   "target": {},
+   "symptom": "拿到 shell 立刻开始扫 /24，扫了两小时只发现几台 web，没有新权限",
+   "action": [
+    "先读 ~/.bash_history —— 一条 ssh 命令抵半小时扫描",
+    "再读 ~/.ssh/known_hosts / /etc/hosts —— 现成的内网地图",
+    "再找配置文件里的明文密码和云 AK/SK",
+    "这三步做完，往往已经拿到 5-10 台机器的凭据"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/post-exploit-playbook#一"
+   },
+   "confidence": 0.94,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-post-02",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "technique-note",
+   "section": "history 是最快的凭据来源",
+   "target": {},
+   "symptom": "不知道怎么进内网，扫端口又怕触发告警",
+   "action": [
+    "cat ~/.bash_history | grep -E 'ssh|mysql|redis|psql|ftp'",
+    "常见收获：内网 IP 清单、数据库密码、部署脚本路径、跳板机账号",
+    "同时看 ~/.zsh_history / ~/.mysql_history / ~/.psql_history"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/post-exploit-playbook#一"
+   },
+   "confidence": 0.92,
+   "source": "web-takeover",
+   "hits": 16,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-post-03",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "pitfall",
+   "section": "扫内网是被发现的最快途径",
+   "target": {},
+   "symptom": "扫内网被封了：扫了 /16 段，十分钟后 shell 掉线、IP 被封（扫描是被发现最快的途径）",
+   "action": [
+    "有 EDR/IDS 的环境，全端口扫描几分钟内就告警",
+    "优先用已有信息横向（history 里的 ssh、known_hosts、配置里的 DB 地址）",
+    "必须扫时只扫必要网段 + 常见端口，不要全端口"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/post-exploit-playbook#四"
+   },
+   "confidence": 0.91,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-post-04",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "principle",
+   "section": "什么时候该停",
+   "target": {},
+   "symptom": "已经拿到目标数据，还想着「再多打一台」，结果触发告警",
+   "action": [
+    "停的条件：已达成授权目标 / 触发告警 / 进入授权范围外 / 边际收益递减",
+    "每多一台机器，多一份日志，多一次被发现的机会",
+    "「再多打一台」是最危险的想法"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/post-exploit-playbook#五"
+   },
+   "confidence": 0.9,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-post-05",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "pitfall",
+   "section": "删日志会把渗透测试变成恶意入侵",
+   "target": {},
+   "symptom": "日志要不要删？收尾时想清理痕迹把 /var/log 删了 —— 这会把渗透测试定性成恶意入侵",
+   "action": [
+    "除非授权明确要求清理，否则不动日志",
+    "删日志是明确的入侵证据，且多数情况删不干净（远端日志、SIEM）",
+    "要清理的是：上传的工具、创建的账号、改过的配置、临时文件"
+   ],
+   "outcome": "pitfall",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/post-exploit-playbook#六"
+   },
+   "confidence": 0.93,
+   "source": "web-takeover",
+   "hits": 0,
+   "success": 0,
+   "fail": 0
+  },
+  {
+   "id": "web-post-06",
+   "topic": [
+    "web",
+    "pentest"
+   ],
+   "phase": "technique-note",
+   "section": "跳板机和 CI/CD 是最值钱的靶子",
+   "target": {},
+   "symptom": "打了一堆 web 服务器，每台都是同样的权限，没有进展",
+   "action": [
+    "判角色：跳板机（多个 ssh 会话 / 有 ansible）> CI/CD（jenkins/gitlab-runner）> 应用服务器",
+    "跳板机的 history 里有全部内网机器和凭据",
+    "CI/CD 的构建脚本里常有生产环境凭据"
+   ],
+   "outcome": "success",
+   "evidence": {
+    "source": "web-takeover",
+    "ref": "skill-router-packs/web-takeover/post-exploit-playbook#三"
+   },
+   "confidence": 0.89,
+   "source": "web-takeover",
    "hits": 0,
    "success": 0,
    "fail": 0

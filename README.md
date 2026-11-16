@@ -19,7 +19,7 @@
 MCP server，15 个工具，纯 stdio，无外部依赖。不训练、不微调、不联网检索、不用向量库。
 
 ```
-649 个 skill / 14 个源      按症状查，不按目录翻（可 skill_sync 继续扩）
+659 个 skill / 16 个源      按症状查，不按目录翻（含 10 个随包 skill）
 864 条实战经验              症状 → 动作 → 证据出处，带置信度
 检索 1.5 ms                 纯本地词表 + 现象本体，无 embedding
 ```
@@ -156,12 +156,23 @@ server 启动时通过 MCP 标准字段 `instructions` 下发了完整规则（�
 server.py          MCP 服务本体，15 个工具
 experience.py      经验库检索（词表 + IDF + 现象本体，1.5ms）
 evolve.py          自成长：按行为推断成功/失败，微调排序
-experience.json    864 条经验
+experience.json    922 条经验
 repos.json         仓库清单
-index.json         索引（含 sha pin，可直接用）
+index.json         索引（16 源 / 659 skill，sha 已 pin）
+packs/             随包 skill，clone 就有，不依赖外部仓库
 cache/             正文缓存，首次 load 时自动生成
 logs/error.log     被 except 吞掉的异常
 ```
+
+### packs/ 里有什么
+
+| 目录 | 内容 |
+| :--- | :--- |
+| `packs/license/` | 网络授权 / 卡密 / keygen：机制分类、协议分析、云端替代、定位补丁、算法还原 |
+| `packs/web-takeover/` | 渗透拿站：打点决策、WAF 绕过、shell 升级、隧道代理、后渗透 |
+
+这两个目录在 `repos.json` 里对应 `local/license-pack` 和 `local/web-takeover`，
+path 是相对路径，以 `SKILL_ROUTER_HOME` 为基准解析 —— 换台机器也能用，不需要改配置。
 
 ## 环境变量
 
@@ -185,6 +196,6 @@ logs/error.log     被 except 吞掉的异常
 
 ## 边界
 
-- 索引里 14 个源都是第三方仓库，各自有 license，商用前自己看
+- 索引里 16 个源：14 个第三方仓库 + 2 个随包 pack，第三方的内容各自有 license
 - 经验库带置信度，`<0.85` 会标「未验证」，版本不同坑也不同
 - 预算硬上限 40000 tokens，一次 `full` 加载超过 2 个 skill 会顶到闸门

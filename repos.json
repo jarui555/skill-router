@@ -105,5 +105,20 @@
    "note": "破解总入口 · 819 源 skill 分 11 类，默认分支 master，靠 read_ref 逐层读"
   }
  ],
- "local": []
+ "local": [
+  {
+   "id": "local/license-pack",
+   "path": "packs/license",
+   "trust": "trusted",
+   "domain": "license",
+   "note": "网络授权 / 卡密 / keygen 专项 · 5 个 skill"
+  },
+  {
+   "id": "local/web-takeover",
+   "path": "packs/web-takeover",
+   "trust": "trusted",
+   "domain": "pentest",
+   "note": "渗透拿站专项 · 打点决策 / WAF 绕过 / shell 升级 / 隧道 / 后渗透"
+  }
+ ]
 }

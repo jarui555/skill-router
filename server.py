@@ -699,12 +699,18 @@ def _api(path: str) -> Any:
 
 
 def _fetch_skill_text(repo: str, sha: str, path: str) -> str:
-    """拉取 skill 正文。本地源（sha=local）直接读盘，远程走缓存 + 三源 fallback。"""
+    """拉取 skill 正文。本地源（sha=local）直接读盘，远程走缓存 + 三源 fallback。
+
+    本地源的 path 可能是相对路径（发布包里 packs/xxx/SKILL.md），
+    相对路径一律以 SKILL_ROUTER_HOME 为基准解析 —— 否则换个 cwd 就找不到。
+    """
     if sha == "local":
         p = Path(path)
+        if not p.is_absolute():
+            p = HOME / p
         if p.is_file():
             return p.read_text(encoding="utf-8", errors="replace")
-        raise RuntimeError(f"本地文件不存在：{path}")
+        raise RuntimeError(f"本地文件不存在：{p}")
 
     cache = CACHE_DIR / repo.replace("/", "__") / sha[:12] / path
     if cache.is_file():
@@ -1067,10 +1073,24 @@ def _sync_one(entry: dict, enrich: bool, pin: bool = True) -> dict:
 
 def _sync_local(entry: dict) -> dict:
     """扫描本地源。kind='skill' 只认 SKILL.md；kind='kb' 认全部 .md（方法论文章）。
-    sha 固定为 'local'，读取时直接走文件系统，零网络零延迟。"""
+    sha 固定为 'local'，读取时直接走文件系统，零网络零延迟。
+
+    路径处理：repos.json 里写相对路径（packs/xxx）时以 SKILL_ROUTER_HOME 为基准，
+    索引里存「相对 HOME 的路径」，这样发布包换台机器也能用。
+    HOME 之外的（C:/... D:/...）保持绝对路径。
+    """
     root = Path(entry["path"])
+    if not root.is_absolute():
+        root = HOME / root
     if not root.is_dir():
         raise RuntimeError(f"目录不存在：{root}")
+
+    def _store_path(f: Path) -> str:
+        try:
+            return f.relative_to(HOME).as_posix()
+        except ValueError:
+            return str(f).replace("\\", "/")
+
     domain = entry.get("domain", "local")
     overrides: dict[str, str] = entry.get("domain_overrides") or {}
     rules: list[dict] = entry.get("domain_rules") or []
@@ -1110,7 +1130,7 @@ def _sync_local(entry: dict) -> dict:
                 _warn('_sync_local', _e)
                 text = ""
             skills.append({
-                "repo": repo_id, "name": nm, "path": str(f).replace("\\", "/"),
+                "repo": repo_id, "name": nm, "path": _store_path(f),
                 "sha": "local", "branch": "local", "size": f.stat().st_size,
                 "desc": _desc_of(text), "trust": entry.get("trust", "trusted"),
                 "domain": overrides.get(nm, d), "local": True, "kb": True, "rel": rel,
@@ -1127,7 +1147,7 @@ def _sync_local(entry: dict) -> dict:
                 _warn('_sync_local', _e)
                 text = ""
             skills.append({
-                "repo": repo_id, "name": name, "path": str(f).replace("\\", "/"),
+                "repo": repo_id, "name": name, "path": _store_path(f),
                 "sha": "local", "branch": "local", "size": f.stat().st_size,
                 "desc": _desc_of(text), "trust": entry.get("trust", "trusted"),
                 "domain": overrides.get(name, domain), "local": True,
@@ -3349,22 +3369,23 @@ RECIPES: dict[str, dict] = {
         ],
     },
     "license_bypass": {
-        "alias": ["卡密", "注册机", "授权码", "激活码", "license", "机器码", "试用", "加密狗"],
+        "alias": ["卡密", "注册机", "授权码", "激活码", "license", "机器码", "试用", "加密狗",
+                  "网络验证", "联网激活", "云授权", "授权服务器", "心跳验证", "序列号"],
         "steps": [
             [
                 "定性",
-                ["client-license-validation-bypass"],
-                "开测四问：权威在服务端还是本地 / 能否伪造成握手 / 有无后门捷径 / 功能是否与校验分离",
+                ["network-license-mechanism-map"],
+                "先判权威在哪端：A 本地算法 / B 签名链 / C 硬件绑定 / D 云端校验。判错类型后面全是白工",
             ],
             [
-                "路由",
-                ["alice-crack"],
-                "按任务匹配度选模块，先看领域索引不要全读",
+                "协议分析",
+                ["network-license-protocol-analysis"],
+                "D 类必做：抓包拆字段，找签名、时效、一次性、心跳。先回答「能不能只改一个字段就过」",
             ],
             [
-                "静态定位",
-                ["rev-idapython", "ida-ghidra-workflow", "rev-struct"],
-                "定位校验函数与决策分支，恢复结构体",
+                "定位判定点",
+                ["license-validation-locate-patch"],
+                "字符串/API/调用栈/AOB 四种找法。注意可能有启动/打开/导出三处独立判定",
             ],
             [
                 "脱壳/反检测",
@@ -3374,12 +3395,12 @@ RECIPES: dict[str, dict] = {
             [
                 "动态验证",
                 ["rev-frida", "runtime-patch-validation"],
-                "Hook 或内存 patch 验证放行",
+                "先用 Frida 改返回值确认逻辑通了，再 patch 二进制。省得反复改文件",
             ],
             [
-                "服务端依赖",
-                ["android-elf-license-crack", "cloud-license-frida-hook"],
-                "必须联网时走中继或完全脱机化（前者 Android/ELF，后者 PE 云许可）",
+                "A/D 分流",
+                ["license-keygen-recovery", "cloud-license-emulation"],
+                "A 类走算法还原（自洽验证是假验证，必须用原厂 key 反推）；D 类走服务端替代（模拟/中继/patch，优先试 patch）",
             ],
         ],
     },
@@ -3550,6 +3571,72 @@ RECIPES: dict[str, dict] = {
             ("归因", ("offensive-reporting",), "输出家族归因与处置建议"),
         ),
     },
+    "take_site": {
+        "alias": ["拿站", "拿 shell", "拿shell", "getshell", "打点", "拿到服务器",
+                  "渗透整站", "日站", "拿权限", "打进去", "进内网"],
+        "steps": [
+            [
+                "侦察",
+                ["reconnaissance", "techstack-identification"],
+                "先摸清框架、版本、暴露面。这一步的结论决定后面所有判断",
+            ],
+            [
+                "打点决策",
+                ["entry-point-triage"],
+                "排序比挖洞重要：从一堆资产里挑出「今天能打进去」的那个。单点超 4 小时没进展就换",
+            ],
+            [
+                "突破",
+                ["offensive-sqli", "offensive-file-upload", "offensive-rce", "offensive-ssrf"],
+                "按打点决策选中的类型深入，不要四种各试一遍 —— 那等于一种都没试",
+            ],
+            [
+                "受阻绕过",
+                ["waf-bypass-decision-tree"],
+                "被拦先判是 WAF 还是业务逻辑。三层递进：payload 变形 → 协议层 → 换入口（找源站 IP 最有效）",
+            ],
+            [
+                "shell 升级",
+                ["webshell-to-system"],
+                "webshell 只是 www-data。四道坎：disable_functions / open_basedir / 不出网 / 提权",
+            ],
+            [
+                "内网与收尾",
+                ["proxy-tunnel-pivot", "post-exploit-playbook"],
+                "先榨干这台机器的凭据和 history，再决定要不要扫。什么时候停比继续打更重要",
+            ],
+        ],
+    },
+    "waf_bypass": {
+        "alias": ["waf", "绕waf", "绕 waf", "被拦", "拦截", "403", "被封", "封了", "过不去"],
+        "steps": [
+            [
+                "判定",
+                ["waf-bypass-decision-tree"],
+                "先确认是 WAF 还是业务逻辑拒绝 —— 九成的「被拦」其实是 CSRF 缺失 / 权限不足 / 方法不对",
+            ],
+            [
+                "指纹",
+                ["techstack-identification"],
+                "判厂商：Cloudflare / 阿里云 / 腾讯云 / 自研。规则集差异很大，决定后面用哪套变形",
+            ],
+            [
+                "payload 变形",
+                ["offensive-waf-bypass"],
+                "一次只改一个维度。同时改编码+大小写+注释，被拦了也不知道是哪层生效",
+            ],
+            [
+                "协议层",
+                ["offensive-waf-bypass"],
+                "分块传输 / Content-Type 混淆 / 参数污染 / 超长 body / 伪造内网来源头",
+            ],
+            [
+                "换入口",
+                ["waf-bypass-decision-tree"],
+                "找源站 IP / 备用域名 / 移动端 API / IPv6 / 非标端口。这层最有效，比绕 payload 值 10 倍",
+            ],
+        ],
+    },
     "asset_recon": {
         "alias": ("资产测绘", "资产发现", "信息收集", "子域名", "子域", "recon", "指纹识别", "打点面"),
         "steps": (
@@ -3589,7 +3676,7 @@ RECIPES: dict[str, dict] = {
         ),
     },
     "cloud_attack": {
-        "alias": ("云上", "云原生", "k8s", "kubernetes", "容器逃逸", "oss", "云元数据", "aws", "阿里云", "云函数"),
+        "alias": ("云上打点", "云上", "云原生", "k8s", "kubernetes", "容器逃逸", "oss", "云元数据", "aws", "阿里云", "云函数"),
         "steps": (
             ("云资产", ("offensive-cloud",), "先摸清云账号边界：IAM、存储桶、函数、元数据服务"),
             ("元数据", ("offensive-ssrf",), "SSRF 打 169.254.169.254 拿临时凭据"),
@@ -3680,11 +3767,28 @@ def skill_plan(task: str, max_steps: int = 6) -> str:
         return "索引为空，先 skill_sync()。"
 
     t = task.lower()
-    hit_key, recipe = "", None
-    for k, r in RECIPES.items():
-        if any(a.lower() in t for a in r["alias"]):
-            hit_key, recipe = k, r
-            break
+    hit_key, recipe, _best = "", None, 0
+
+    # 最长 alias 优先：避免短别名抢走长别名。
+    # 「云上打点」应该命中 cloud_attack（4 字），而不是 take_site 的「打点」（2 字）。
+    def _pick(text: str) -> tuple[str, dict | None]:
+        k_best, r_best, n_best = "", None, 0
+        for k, r in RECIPES.items():
+            for a in r["alias"]:
+                al = a.lower()
+                if al in text and len(al) > n_best:
+                    k_best, r_best, n_best = k, r, len(al)
+        return k_best, r_best
+
+    hit_key, recipe = _pick(t)
+
+    # 精确子串没命中时，去掉口语虚词再试一次。
+    # 「帮我拿这个站」不含「拿站」，但去掉「帮我/这个」就含了。
+    # 只在第一次失败后启用，不影响原有精确匹配的优先级。
+    if not recipe:
+        t2 = re.sub(r"这个|那个|一个|一下|帮我|帮忙|请问|怎么|如何|能不能|可以|的|了|吧|呢|吗|啊", "", t)
+        if t2 != t:
+            hit_key, recipe = _pick(t2)
 
     out: list[str] = [f"# 作战计划：{task}", ""]
 

@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated_at": 1794841536,
+ "updated_at": 1794843410,
  "repos": {
   "BrownFineSecurity/iothackbot": {
    "repo": "BrownFineSecurity/iothackbot",
@@ -14016,6 +14016,223 @@
        "authorized Active Directory and Windows identity attacks including Kerberos, AD CS, BloodHound paths, NTLM relay, and domain privi",
        "域渗透、Kerberoasting、AS-REP、委派 - AD CS（ESC1–ESC8 等）证书攻击 - BloodHound / SharpHound 攻击路径 - NTLM Relay / Coercer 强制认证 - 本地提权到域路径（Potato "
       ],
+      "requires": [],
+      "avoid": [],
+      "tools": []
+     }
+    }
+   ]
+  },
+  "local/license-pack": {
+   "repo": "local/license-pack",
+   "branch": "local",
+   "sha": "local",
+   "stars": 0,
+   "trust": "trusted",
+   "domain": "license",
+   "local": true,
+   "synced_at": 1794843342,
+   "skills": [
+    {
+     "repo": "local/license-pack",
+     "name": "cloud-license-emulation",
+     "path": "packs/license/cloud-license-emulation/SKILL.md",
+     "sha": "local",
+     "branch": "local",
+     "size": 8184,
+     "desc": "目标必须联网才能激活（D 类云端校验）时，别想\"破解算法\"，要想\"替代服务端\"。三条路：本地模拟服务端 / 中继缓存 / patch 客户端跳过请求。",
+     "trust": "trusted",
+     "domain": "license",
+     "local": true,
+     "meta": {
+      "use_when": [],
+      "requires": [
+       "先测客户端到底校验不校验证书： ```bash # 1. 改 hosts 指向本地 # 2. 起一个自签证书的 HTTPS 服务 # 3. 看客户端是否报证书错误 ``` - 不报错 → 直接能模拟 - 报 `SSLHandshakeException` / "
+      ],
+      "avoid": [],
+      "tools": []
+     }
+    },
+    {
+     "repo": "local/license-pack",
+     "name": "license-keygen-recovery",
+     "path": "packs/license/license-keygen-recovery/SKILL.md",
+     "sha": "local",
+     "branch": "local",
+     "size": 8363,
+     "desc": "把\"输入 key → 输出 TRUE\"的映射完整还原成算法，并验证 keygen 真的能过。重点是验证方法 —— 自洽验证是假验证，自己的 keygen 验自己的输出永远通过。",
+     "trust": "trusted",
+     "domain": "license",
+     "local": true,
+     "meta": {
+      "use_when": [],
+      "requires": [],
+      "avoid": [],
+      "tools": []
+     }
+    },
+    {
+     "repo": "local/license-pack",
+     "name": "license-validation-locate-patch",
+     "path": "packs/license/license-validation-locate-patch/SKILL.md",
+     "sha": "local",
+     "branch": "local",
+     "size": 8364,
+     "desc": "在二进制里快速找到\"那个 if\" —— 决定授权通过与否的分支。含字符串锚点、API 锚点、调用栈回溯、返回值特征、多版本 AOB 迁移。",
+     "trust": "trusted",
+     "domain": "license",
+     "local": true,
+     "meta": {
+      "use_when": [],
+      "requires": [],
+      "avoid": [
+       "不要直接改字符串**，要往上找引用它的判断"
+      ],
+      "tools": []
+     }
+    },
+    {
+     "repo": "local/license-pack",
+     "name": "network-license-mechanism-map",
+     "path": "packs/license/network-license-mechanism-map/SKILL.md",
+     "sha": "local",
+     "branch": "local",
+     "size": 6795,
+     "desc": "拿到一个商业软件的授权目标，先判它属于哪一类机制（本地算法 / 签名链 / 硬件绑定 / 云端校验），再决定走哪条路。判错类型，后面全是白工。",
+     "trust": "trusted",
+     "domain": "license",
+     "local": true,
+     "meta": {
+      "use_when": [],
+      "requires": [],
+      "avoid": [
+       "不要做的事**：试图从公钥推导私钥"
+      ],
+      "tools": []
+     }
+    },
+    {
+     "repo": "local/license-pack",
+     "name": "network-license-protocol-analysis",
+     "path": "packs/license/network-license-protocol-analysis/SKILL.md",
+     "sha": "local",
+     "branch": "local",
+     "size": 7612,
+     "desc": "抓包拆解网络授权协议 —— 找出哪个字段是签名、哪个字段决定授权、有没有时效和一次性限制。目标是回答\"我能不能只改一个字段就通过\"。",
+     "trust": "trusted",
+     "domain": "license",
+     "local": true,
+     "meta": {
+      "use_when": [],
+      "requires": [],
+      "avoid": [],
+      "tools": []
+     }
+    }
+   ]
+  },
+  "local/web-takeover": {
+   "repo": "local/web-takeover",
+   "branch": "local",
+   "sha": "local",
+   "stars": 0,
+   "trust": "trusted",
+   "domain": "pentest",
+   "local": true,
+   "synced_at": 1794843342,
+   "skills": [
+    {
+     "repo": "local/web-takeover",
+     "name": "entry-point-triage",
+     "path": "packs/web-takeover/entry-point-triage/SKILL.md",
+     "sha": "local",
+     "branch": "local",
+     "size": 6210,
+     "desc": "手上有一堆资产和漏洞候选，决定先打哪个。核心是把\"能打的\"和\"打得进去的\"分开 —— 大部分时间浪费在技术上能打但业务上打不进去的点。",
+     "trust": "trusted",
+     "domain": "pentest",
+     "local": true,
+     "meta": {
+      "use_when": [],
+      "requires": [],
+      "avoid": [
+       "不要做的事**：在一个点上反复换 payload 变体"
+      ],
+      "tools": []
+     }
+    },
+    {
+     "repo": "local/web-takeover",
+     "name": "post-exploit-playbook",
+     "path": "packs/web-takeover/post-exploit-playbook/SKILL.md",
+     "sha": "local",
+     "branch": "local",
+     "size": 7004,
+     "desc": "拿到第一台机器的权限之后做什么。核心不是继续打，是把这台机器的价值榨干 —— 凭据、配置、信任关系，这些比再打十台机器有用。",
+     "trust": "trusted",
+     "domain": "pentest",
+     "local": true,
+     "meta": {
+      "use_when": [],
+      "requires": [],
+      "avoid": [
+       "不要\"顺手多打几台\" |",
+       "不要删** —— 删日志是明确的入侵证据，且多数情况删不干净 |"
+      ],
+      "tools": []
+     }
+    },
+    {
+     "repo": "local/web-takeover",
+     "name": "proxy-tunnel-pivot",
+     "path": "packs/web-takeover/proxy-tunnel-pivot/SKILL.md",
+     "sha": "local",
+     "branch": "local",
+     "size": 7412,
+     "desc": "拿到一台机器之后，怎么用它进入内网。含出网判断、三层代理链搭建、常见工具选型与坑（glibc 不匹配、DNS 隧道、端口转发）。",
+     "trust": "trusted",
+     "domain": "pentest",
+     "local": true,
+     "meta": {
+      "use_when": [],
+      "requires": [],
+      "avoid": [
+       "不要用 -sS（SYN 扫描需要 raw socket，不走代理）"
+      ],
+      "tools": []
+     }
+    },
+    {
+     "repo": "local/web-takeover",
+     "name": "waf-bypass-decision-tree",
+     "path": "packs/web-takeover/waf-bypass-decision-tree/SKILL.md",
+     "sha": "local",
+     "branch": "local",
+     "size": 7621,
+     "desc": "请求被拦了，先判是 WAF 还是业务逻辑，再按 payload / 协议 / 架构三层递进。核心是知道什么时候绕不过去该换目标。",
+     "trust": "trusted",
+     "domain": "pentest",
+     "local": true,
+     "meta": {
+      "use_when": [],
+      "requires": [],
+      "avoid": [],
+      "tools": []
+     }
+    },
+    {
+     "repo": "local/web-takeover",
+     "name": "webshell-to-system",
+     "path": "packs/web-takeover/webshell-to-system/SKILL.md",
+     "sha": "local",
+     "branch": "local",
+     "size": 7522,
+     "desc": "拿到 webshell 只是拿到 web 用户的执行权限。这一步到系统权限之间还有 disable_functions、open_basedir、SELinux、不出网四道坎。",
+     "trust": "trusted",
+     "domain": "pentest",
+     "local": true,
+     "meta": {
+      "use_when": [],
       "requires": [],
       "avoid": [],
       "tools": []
