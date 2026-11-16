@@ -20,6 +20,15 @@ HOME = Path(__file__).resolve().parent
 EXPECT_TOOLS = 15
 ok, bad = [], []
 
+# Windows 控制台默认 cp1252，直接 print 中文会 UnicodeEncodeError。
+# CI 上 windows-latest 就是这么挂的，先兜住再说话。
+if sys.platform == "win32":
+    for _s in (sys.stdout, sys.stderr):
+        try:
+            _s.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+        except Exception:
+            pass
+
 
 def t(name: str, cond: bool, detail: str = "") -> None:
     (ok if cond else bad).append(name)
