@@ -33,10 +33,28 @@ GitHub 上有大量高质量 skill（trailofbits、Claude-Red、CTF 战队自建
 
 ## 安装
 
+### 一键（推荐）
+
 ```bash
 git clone https://github.com/jarui555/skill-router.git
 cd skill-router
+python install.py
+```
+
+就这一条。脚本干三件事：装依赖 → 跑自检 → **把该贴进客户端的配置直接打印出来**（路径已填好），
+复制粘贴就能用，不用自己拼路径。
+
+Windows 用 PowerShell 也行，逻辑是同一个文件：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File install.ps1
+```
+
+### 手动
+
+```bash
 pip install "mcp>=1.19"
+python check.py
 ```
 
 Python 3.10+。`mcp` 1.x 和 2.x 都支持，代码里做了双版本适配。
