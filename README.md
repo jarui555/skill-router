@@ -1,5 +1,9 @@
 # skill-router
 
+[![check](https://github.com/jarui555/skill-router/actions/workflows/ci.yml/badge.svg)](https://github.com/jarui555/skill-router/actions/workflows/ci.yml)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+
 按需调取 GitHub 上的 agent skills —— 零全量下载，命中才注入。
 
 MCP server，15 个工具，纯 stdio，无外部依赖。不训练、不微调、不联网检索、不用向量库。
@@ -20,7 +24,7 @@ GitHub 上有大量高质量 skill（trailofbits、Claude-Red、CTF 战队自建
 ## 安装
 
 ```bash
-git clone https://github.com/<你的用户名>/skill-router.git
+git clone https://github.com/jarui555/skill-router.git
 cd skill-router
 pip install "mcp>=1.19"
 ```
