@@ -73,6 +73,32 @@ def _warn(where: str, e: BaseException) -> None:
         pass
 
 
+def _atomic_write(path: Path, text: str) -> None:
+    """原子写：先写同目录 .tmp 再 os.replace。
+
+    直接 write_text 会先截断再写，这期间任何读操作都会拿到半截 JSON。
+    error.log 里反复出现的 "Unterminated string starting at ... index.json"
+    就是这么来的 —— skill_sync 写索引的瞬间被 _load_index 读到。
+    """
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(text, encoding="utf-8")
+    # Windows 特有：另一个线程正在读这个文件时，os.replace 会 PermissionError
+    # （Linux 允许覆盖打开中的文件，Windows 不允许）。重试几次，最后退回直接写。
+    for _i in range(5):
+        try:
+            os.replace(tmp, path)
+            return
+        except PermissionError:
+            if _i == 7:
+                path.write_text(text, encoding="utf-8")
+                try:
+                    tmp.unlink()
+                except Exception:
+                    pass
+                return
+            time.sleep(0.05)
+
+
 INDEX_FILE = HOME / "index.json"
 REPOS_FILE = HOME / "repos.json"
 CACHE_DIR = HOME / "cache"
@@ -1164,10 +1190,22 @@ def _load_index() -> dict:
     data: dict = {"version": 1, "repos": {}}
     if INDEX_FILE.is_file():
         try:
-            data = json.loads(INDEX_FILE.read_text(encoding="utf-8"))
+            # 读侧也重试：Windows 上写侧无法 100% 避免读到半截，
+            # 两边都重试才能把窗口压到可忽略。
+            for _try in range(3):
+                try:
+                    data = json.loads(INDEX_FILE.read_text(encoding="utf-8"))
+                    break
+                except Exception:
+                    if _try == 2:
+                        raise
+                    time.sleep(0.05)
         except Exception as _e:
             _warn('_load_index', _e)
-            pass
+            # 不缓存失败的解析结果：文件可能正被 skill_sync 重写。
+            # 一旦把空索引缓存住，后续所有调用都会报「索引为空」，
+            # 直到 mtime 变化才恢复 —— 这是偶发空索引的直接原因。
+            return data
     _INDEX_CACHE["data"] = data
     _INDEX_CACHE["mtime"] = mtime
     return data
@@ -1957,7 +1995,7 @@ def skill_sync(repos: str = "", enrich: bool = False, pin: bool = True) -> str:
 
     idx["updated_at"] = int(time.time())
     INDEX_FILE.parent.mkdir(parents=True, exist_ok=True)
-    INDEX_FILE.write_text(json.dumps(idx, ensure_ascii=False, indent=1), encoding="utf-8")
+    _atomic_write(INDEX_FILE, json.dumps(idx, ensure_ascii=False, indent=1))
 
     lines += ["", f"索引合计 {len(_all_skills(idx))} 个 skill，本次同步 {total} 个。",
               f"索引文件：{INDEX_FILE}"]
@@ -3157,7 +3195,7 @@ def skill_check_update(repo: str = "", apply: bool = False, timeout: int = 25) -
     if apply and changed:
         idx["repos"] = repos
         try:
-            INDEX_FILE.write_text(json.dumps(idx, ensure_ascii=False, indent=1), encoding="utf-8")
+            _atomic_write(INDEX_FILE, json.dumps(idx, ensure_ascii=False, indent=1))
             _INDEX_CACHE["data"] = None       # 让下次 _load_index 重新读
             _INDEX_CACHE["mtime"] = -1.0
         except Exception as ex:
